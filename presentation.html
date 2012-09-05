@@ -1,0 +1,469 @@
+<link href='css/screen.css' rel='stylesheet' />
+<script src='underscore.js'></script>
+<script src='d3.js'></script>
+<script src='treemap.js'></script>
+<script type='text/javascript'>
+  //<![CDATA[
+    function ƒ(v) {
+      var args = [].slice.call(arguments,1);
+      return function(d) {
+        return typeof(d[v]) === "function" ? d[v].apply(d,args) : d[v];
+      }
+    }
+    
+    function I(x) { return x }
+    
+    function px(fn) {
+      return function() {
+        return fn.apply(null,arguments) + "px"
+      }
+    };
+    
+    var onPageCbs = [];
+    var onPage = function (page,fn) {
+      onPageCbs.push([page,fn])
+    }
+    
+    function revealCode(id,fn) {
+      var el = document.getElementById(id); 
+      fn || (fn = function(code,script,page) {
+        page.appendChild(script);
+      });
+      // first script
+      var script = el.querySelector("script");
+      var code = script.innerText
+        .split("\n")
+        .slice(3) // remove cdata & onPage
+        .slice(0,-3) // remove cdata & onPage
+        .map(function(s) { return s.replace(/^    /,"") }).join("\n");
+      var pre = document.createElement("pre");
+      pre.innerText = code;
+      fn(code,pre,el); 
+      prettyPrint();
+    }
+    
+    var peeks = 0;
+    function peek(fn,name) {
+      name || (name = "peek" + (++peeks));
+      return function() {
+        console.log(name,arguments);
+        return fn.apply(null,arguments);
+      }
+    }
+  //]]>
+</script>
+<section>
+  <h1>Visualising Data Using Javascript</h1>
+</section>
+<section>
+  <h2>On the menu for today</h2>
+  <ul id='menu'>
+    <li>d3: what & why</li>
+    <li>Selecting elements</li>
+    <li>Binding data</li>
+    <li>Scales</li>
+    <li>Layouts</li>
+    <li>Questions</li>
+    <li>Creating your visualisations</li>
+  </ul>
+  <script type='text/javascript'>
+    //<![CDATA[
+      var data = [0.1,0.1,0.1,0.1,0.1,0.2,0.5];
+      
+      var colors = d3.scale.linear().domain([0,data.length - 1]).range(["#69C7FF","#3593E6"])
+      
+      d3.select("#menu").selectAll("li").data(data)
+        .append("div")
+        .style("width",function(d) { return (d * 100).toFixed(0) + "%" })
+        .style("height","16")
+        .style("background",function(d,i) { return colors(i) });
+    //]]>
+  </script>
+</section>
+<section class='subtitle'>
+  <h2>d3: what & why of d3</h2>
+</section>
+<section>
+  <h2>What - comparison</h2>
+  <div id='demo1'></div>
+  <script type='text/javascript'>
+    //<![CDATA[
+      var data = [
+        {"name":"jquery", data: [["dom",1], ["svg",0], ["data",0], ["open",0.7 ]]},
+        {"name":"d3", data: [ ["dom",0.8], ["svg",1], ["data",1], ["open",1 ]]},
+        {"name":"highcharts", data:[ ["dom",0], ["svg",1], ["data",1], ["open",0 ]]},
+        {"name":"raphael", data: [["dom",0], ["svg",1], ["data",0], ["open",0.5 ]]},
+        {"name":"processing", data:[ ["dom",0], ["svg",0], ["data",0.5], ["open",0.2 ]]}
+      ];
+      
+      var titles = {
+        open: "Open - uses existing APIs",
+        dom: "DOM tools",
+        svg: "SVG tools",
+        data: "Facilities for working with data"
+      };
+      
+      var sections = d3.select("#demo1")
+        .append("div")
+        .classed("graphs",true)
+        .selectAll("div").data(data,ƒ("name"))
+      sections.enter()
+          .append("div")
+          .classed("data-framework",true)
+          .append("h2")
+          .text(ƒ("name"))
+          ;
+      
+      var divs = sections.append("div").classed("graph",true).selectAll("div").data(ƒ("data"));
+            
+      var colors = d3.scale.category10();
+      var height = d3.scale.linear().domain([0,1]).range([1,600]);
+      divs.enter().append("div")
+        .text(ƒ(0))
+        .attr("class",ƒ(0))
+        .style("background",function(d,i) { return colors(i) })
+        .style("width",_.compose(height,ƒ(1)))
+      
+      // selection behaviour
+      var reorder;
+      var cats = data[0].data.map(function(d,i) { return { name: d[0], selected: i === 0 } });
+      
+      var radios = d3.select("#demo1").append("div").classed("radios",true).selectAll("radio").data(cats).enter()
+        .append("label");
+      
+        radios.append("input").attr("name","sort").attr("value",ƒ("name")).attr("type","radio").on("change",function(data) {
+          _.each(cats,function(c) { c.selected = false });
+          data.selected = true;
+          reorder();
+        });
+        document.querySelector("#demo1 input[value=dom]").checked = true;
+        radios.append("span").text(function(d) { return titles[d.name] });
+        
+      
+      _.each(data,function(d) {
+        d.dict = _.reduce(d.data,function(h,kv) {
+          h[kv[0]] = kv[1];
+          return h;
+        },{});
+      });
+      
+      var getSelected = function() { for(var c in cats) if(cats[c].selected) return cats[c] };
+      
+      reorder = function() {
+        var selected = getSelected().name;
+        sections.sort(function(a,b) { return b.dict[selected] - a.dict[selected] });
+      };
+      
+      reorder();
+    //]]>
+  </script>
+  <style>
+    #demo1 {
+      font-size: 0.5em;
+      overflow: auto; }
+      #demo1 h2 {
+        float: left;
+        width: 30%; }
+      #demo1 .graph {
+        float: left;
+        margin-bottom: 1em; }
+      #demo1 .data-framework {
+        overflow: auto; }
+      #demo1 .radios {
+        float: left;
+        width: 48%; }
+      #demo1 .graphs {
+        float: left;
+        width: 48%; }
+      #demo1 label {
+        display: block;
+        font-size: 2em;
+        line-height: 2em; }
+      #demo1 input {
+        margin-right: 2em; }
+  </style>
+</section>
+<section>
+  <h2>Philosophy</h2>
+  <p>Don't invent a propritatory API - use SVG, HTML. You'll see 'g' elements just like in SVG, not new names for old things (eg jQuery - `dataType` not `responseType`).</p>
+  <p>Toolkit for visualisations, not lots of prebaked ones.</p>
+  <p>Definitely not a charting library.</p>
+</section>
+<section>
+  <h2>Why</h2>
+  <p>Not propriatory - you can use what you learn about SVG, HTML and CSS everywhere.</p>
+  <p>Mobile friendly (HTML everywhere, SVG iOS, Android Browser 3.0+).</p>
+  <p>Less to learn - not a big scary black box.</p>
+</section>
+<section class='subtitle'>
+  <h2>Selecting elements</h2>
+</section>
+<section>
+  <h2>API</h2>
+  <pre>d3.select("body")&#x000A;  .append("h2")&#x000A;  .text("foo")&#x000A;  .transition()&#x000A;    .style("color","red");&#x000A;&#x000A;d3.select("p")&#x000A;  .style("font-size","2em")&#x000A;  .append("span")&#x000A;    .text("I'm a span in a paragraph");&#x000A;</pre>
+</section>
+<section>
+  <h2>Chaining</h2>
+  <p>Just like jQuery, we can keep calling methods on the same elements.</p>
+  <p>If we create new elements via append, the context of our chain becomes the new elements.</p>
+  <p>Use `transition` to apply changes over time.</p>
+</section>
+<section>
+  <h2>Events</h2>
+  <pre>d3.selectAll("input")&#x000A;  .on("change",function(data,index) {&#x000A;    // event handler&#x000A;  });&#x000A;</pre>
+  <p>Again, very similar to jQuery, `this` being DOM element.</p>
+  <p>But what are those `data` and `index` parameters...?</p>
+</section>
+<section class='subtitle'>
+  <h2>We need to talk about data</h2>
+</section>
+<section id='data-demo'>
+  <h2>Data</h2>
+  <ul></ul>
+  <script type='text/javascript'>
+    //<![CDATA[
+      onPage("data-demo",function() {
+        var sections = d3.select("#data-demo ul")
+          .selectAll("li")
+          .data([
+            "d3 gets data in front of users by binding it to elements.",
+            "You can then use it to dynamically setup attributes *",
+            "It'll be passed to your event handers"
+          ])
+          .enter()
+            .append("li")
+            .style("opacity",0)
+            .text(function(d) { return d }) // * dynamic
+            .transition()
+            .delay(function(d,i) { return i * 1000 })
+            .style("opacity",1)
+      });
+    //]]>
+  </script>
+  <script type='text/javascript'>
+    //<![CDATA[
+      onPage("data-demo",function() {
+        setTimeout(function() {
+          revealCode("data-demo") 
+        },3500);
+      });
+    //]]>
+  </script>
+</section>
+<section>
+  <h2>Joins</h2>
+  <p>In the code for the comparison, before we have any data we select all divs.</p>
+  <p>Why are we binding to elements that don't exist?</p>
+  <pre>var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div")&#x000A;</pre>
+  <p>Why isn't this a waste of time?</p>
+</section>
+<section>
+  <h2>Hierarchy</h2>
+  <p>We can reflect a hierarchical set of data in elements</p>
+  <pre>var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div").data(data,ƒ("name"))&#x000A;&#x000A;sections.enter()&#x000A;    .append("div")&#x000A;    .classed("data-framework",true)&#x000A;    .append("h2")&#x000A;    .text(ƒ("name"))&#x000A;    ;&#x000A;</pre>
+  <p>In our framework comparison we had a set of frameworks each with 4 attributes.</p>
+  <p>So we need a set of 5 elements each containing 4 elements.</p>
+</section>
+<section id='change'>
+  <h2>Reflecting change</h2>
+  <p>Two types - change in values, data leaving stage</p>
+  <div id='change-demo'></div>
+  <button id='change-btn'>
+    Change
+  </button>
+  <script type='text/javascript'>
+    //<![CDATA[
+      onPage("change",function() {
+      var draw = function() {
+        var root = d3.select("#change-demo")
+        var colors = d3.scale.linear().domain([-2,2]).range(["#FF0000","#0000FF"]);
+        var s = root.selectAll("div").data(d3.range(Math.round(Math.random()  * 10)).map(d3.random.normal()));
+        s.transition()
+         .style("color",function(d)  { return colors(d) });
+        s.enter()
+            .append("div")
+            .style({opacity: 0})
+            .text(I)
+            .transition()
+            .delay(function(d,i) { return i * 250 })
+            .style("color",function(d)  { return colors(d) })
+            .style({opacity: 1})
+        s.exit()
+            .transition()
+            .delay(function(d,i) { return i * 250 })
+            .style({opacity: 0})
+            .remove();
+      }
+      d3.select("#change-btn").on("click",draw);
+      draw();
+      });
+    //]]>
+  </script>
+  <script type='text/javascript'>
+    //<![CDATA[
+      onPage("change",function() {
+        setTimeout(function() {
+          revealCode("change") 
+        },2500);
+      });
+    //]]>
+  </script>
+</section>
+<section>
+  <h2>Update</h2>
+  <p>You're setting rules for updates as soon as you bind data</p>
+  <p>Updates apply when you have both an element and a datum</p>
+  <p>Rerun the selection when adding data, attributes will be updated</p>
+  <p>Use transitions to move smoothly to the new values</p>
+  <pre>d3.selectAll("div") // 1 div&#x000A;  .data([1,2,3,4])&#x000A;  // will act on the first div, passing 1&#x000A;  .text(function(d) { &#x000A;    return "I'm updating " + 1 // I'm updating 1&#x000A;   }) &#x000A;</pre>
+</section>
+<section>
+  <h2>Enter</h2>
+  <p>New data that doesn't fit into the current selection goes into enter</p>
+  <p>eg:</p>
+  <pre>d3.selectAll("div") // 1 div&#x000A;  .data([1,2,3,4])&#x000A;&#x000A;d3.enter() // will act on [2,3,4], appending 3 divs&#x000A;  .append("div") &#x000A;</pre>
+</section>
+<section>
+  <h2>Exit</h2>
+  <p>Elements that no longer have a datum will go into exit</p>
+  <p>eg:</p>
+  <pre>d3.selectAll("div") // 5 divs&#x000A;  .data([1])&#x000A;&#x000A;d3.exit() // will affect the other 4 divs, removing them&#x000A;  .remove()&#x000A;&#x000A;</pre>
+</section>
+<section>
+  <h2>Key functions</h2>
+  <p>If we change data, we need a way for d3 (and us) to know it's actually referring to the same thing.</p>
+  <p>Initially datums are indentified by position in array - if we change order this breaks.</p>
+  <p>Key fn tells d3 which of the values is a unique key.</p>
+  <pre>var data = [&#x000A;  {"name":"jquery", data: [["dom",1], ["svg",0], ["data",0], ["open",0.7 ]]},&#x000A;  {"name":"d3", data: [ ["dom",0.8], ["svg",1], ["data",1], ["open",1 ]]},&#x000A;  {"name":"highcharts", data:[ ["dom",0], ["svg",1], ["data",1], ["open",0 ]]},&#x000A;  {"name":"raphael", data: [["dom",0], ["svg",1], ["data",0], ["open",0.5 ]]},&#x000A;  {"name":"processing", data:[ ["dom",0], ["svg",0], ["data",0.5], ["open",0.2 ]]}&#x000A;];&#x000A;&#x000A;var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div").data(data,ƒ("name"))&#x000A;</pre>
+</section>
+<section>
+  <h2>Loading data</h2>
+  <p>Don't need to include jQuery - has facilities to load CSV, JSON etc</p>
+  <pre>d3.csv(url,function(csv) {&#x000A;  // remember to parse your data - csv is stringly typed&#x000A;});&#x000A;&#x000A;d3.json(url,function(tastyData) {&#x000A;&#x000A;});&#x000A;</pre>
+</section>
+<section>
+  <h2>Munging data</h2>
+  <p>d3 includes the JS 1.6 array methods - `filter`, `map`, `reduce` etc</p>
+  <p>Similar functionailty to underscore.js - `nest` for `_.groupBy` etc</p>
+  <p>Lots of other useful methods - `extend` gives max and min - worth a read</p>
+</section>
+<section class='subtitle'>
+  <h2>Scales</h2>
+</section>
+<section>
+  <h2>Functional scales</h2>
+  <p>d3 can create our scales, so we don't need to.</p>
+  <pre>var mapping = d3.scale.linear()&#x000A;  .domain([d3.min(data), d3.max(data)])&#x000A;  .range([0,VISUAL_SIZE_DESIRED]);&#x000A;</pre>
+  <p>Has built in colour scales that look lovely</p>
+</section>
+<section>
+  <h2>Ranges and domains</h2>
+  <p>Domain is the range of values something has</p>
+  <p>Range is a visual representation of that domain</p>
+  <p>We map between them</p>
+</section>
+<section>
+  <h2>First page menu</h2>
+  <p>Simple colour scale with steps.</p>
+  <pre>var data = [0.05,0.1,0.1,0.1,0.1,0.1,0.45];&#x000A;&#x000A;var colors = d3.scale.linear().domain([0,data.length - 1]).range(["#69C7FF","#3593E6"])&#x000A;d3.select("#menu").selectAll("li").data(data)&#x000A;  .append("div")&#x000A;  .style("width",function(d) { return (d * 100).toFixed(0) + "%" })&#x000A;  .style("height","16")&#x000A;  .style("background",function(d,i) { return colors(i) });&#x000A;</pre>
+</section>
+<section class='subtitle'>
+  <h2>Layouts</h2>
+</section>
+<section>
+  <h2>Layouts</h2>
+  <p>Pure data: they don't do the laying out for you</p>
+  <p>Most generic part of a layout is the algorithm to decide relative sizes/positions, that's what d3 gives you.</p>
+  <p>Bound to the data, accessed as if you had a `dx` and `dy` in your data.</p>
+</section>
+<section id='layout-demo'>
+  <h2>Histogram</h2>
+  <div id='histogram-1'></div>
+  <script type='text/javascript'>
+    //<![CDATA[
+      onPage("layout-demo",function() {
+      
+        var randomData = d3.range(1000).map(d3.random.irwinHall(10));
+      
+        var width = 800;
+        var height = 500;
+      
+        var x = d3.scale.linear()
+            .domain([0, 1])
+            .range([0, width]);
+      
+        var data = d3.layout.histogram()
+            .bins(x.ticks(20))
+            (randomData);
+      
+        var y = d3.scale.linear()
+            .domain([0, d3.max(data, function(d) { return d.y; })])
+            .range([height, 0]);
+      
+        var svg = d3.select("#histogram-1").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+      
+        svg.selectAll("rect")
+            .data(data)
+          .enter()
+            .append("rect")
+            .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; })
+            .attr("width", x(data[0].dx) - 1)
+            .attr("height", function(d) { return height - y(d.y); });
+      
+      });
+    //]]>
+  </script>
+  <div class='demo-code'></div>
+  <script type='text/javascript'>
+    //<![CDATA[
+      onPage("layout-demo",function() {
+        revealCode("layout-demo",function(code,pre) {
+          d3.select("#layout-demo .demo-code")[0][0].appendChild(pre); 
+        }) 
+      });
+    //]]>
+  </script>
+  <style>
+    #histogram-1 {
+      float: left;
+      width: 28%; }
+    
+    #layout-demo .demo-code {
+      float: left;
+      width: 70%; }
+    #layout-demo pre {
+      padding: 0;
+      margin: 0; }
+  </style>
+</section>
+<section class='subtitle'>
+  <h2 style='font-size:2em'>Tell me and I'll forget;<br/><br/> show me and I may remember;<br /><br/> involve me and I'll understand.</h2>
+</section>
+<section>
+  <h2>Hands on time</h2>
+  <p>I have history data, and scripts to extract your own.</p>
+  <p>Great sources of data ready to go:</p>
+  <ul>
+    <li>
+      <a href='http://data.gov.uk'>Public data - data.gov.uk</a>
+    </li>
+    <li>
+      <a href='http://musicbrainz.org/'>Music Brainz - Open data on music</a>
+    </li>
+    <li>
+      <a href='http://www.freebase.com/'>Freebase - graph of all the things, easy to query</a>
+    </li>
+    <li>
+      <a href='http://numbrary.com/'>Numbrary - numeric open data online</a>
+    </li>
+  </ul>
+  <p>
+    Tweet your work in progress
+    <a href='http://twitter.com/ga_london'>@GA_London</a>
+    , ask me how to setup a github page to host it.
+  </p>
+</section>
+<script src='prettify.js'></script>
+<script src='main.js'></script>

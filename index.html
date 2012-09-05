@@ -1,0 +1,21 @@
+<head>
+	<script src="d3.js"></script>
+	<script src="data.js"></script>
+	<script src="treemap.js"></script>
+	<script>
+
+		function ƒ(v) {
+			var args = [].slice.call(arguments,1);
+			return function(d) {
+				return typeof(d[v]) === "function" ? d[v].apply(d,args) : d[v];
+			}
+		}
+
+		function I(x) { return x }
+
+
+	</script>
+</head>
+<body>
+	
+</body>
