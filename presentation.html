@@ -56,6 +56,169 @@
 <section>
   <h1>Visualising Data Using Javascript</h1>
 </section>
+<section id='intro-venn'>
+  <h2 id='covering'>
+    We'll be covering
+  </h2>
+  <div id='venn'></div>
+  <style>
+    #venn {
+      font-size: 0.35em; }
+    
+    #covering {
+      float: right;
+      width: 30%; }
+  </style>
+  <script type='text/javascript'>
+    //<![CDATA[
+      onPage("intro-venn",_.once(function() {
+      
+      var data = [
+        {
+          name: "Data",
+          children: [
+            { name: "d3.scale" },
+            { name: "d3 array methods" },
+            { name: "d3 data loaders" },
+            { name: "unix" },
+            { name: "Google spreadsheet" },
+          ]
+        },
+        {
+          name: "Documents",
+          children: [
+            { name: "DOM" },
+            { name: "SVG" },
+            { name: "three.js" },
+          ]
+        },
+        {
+          name: "Design",
+          children: [
+            { name: "Colour" },
+            { name: "d3.layout" },
+            { name: "Principles" },
+            { name: "Process" }
+          ]
+        }
+      ];
+      
+      data.forEach(function(d) {
+        d.children.forEach(function(c) {
+          c.parent = d;
+        });
+      });
+      
+      var plucker = function(v) {
+        return function(o) {
+          return o[v];
+        }
+      };
+      var translate = function(x,y) {
+        return "translate(" + x + "," + y + ")";
+      };
+      
+      var venn = function(opts) {
+      
+        var data = opts.data;
+        var spread = opts.spread;
+        var width = opts.width;
+        var height = opts.height;
+        var radius = opts.radius;
+        var center = {x:width/2,y:height/2};
+      
+        var sin = Math.sin;
+        var cos = Math.cos;
+        var PI = Math.PI;
+      
+        var radsPerSegment = Math.PI * 2 / data.length;
+      
+        var segment = d3.scale.ordinal().range(["#AB00D9","#FFF600","#009EEF"]).domain(d3.range(0,data.length - 1));
+      
+        var g = d3.select("#venn")
+                  .append("svg")
+                  .attr("width",width)
+                  .attr("height",height)
+                  .append("g");
+      
+        var venn = g.selectAll("circle")
+                    .data(data);
+      
+        var segmentAngle = function(i) {
+          var verticalZero = 0.5 * Math.PI;
+          return (i * radsPerSegment) - verticalZero;
+        };
+      
+        var enter = venn.enter()
+          .append("g")
+          .attr("transform",function(d,i) {
+            var centerRadius = radius - spread;
+            var x = cos(segmentAngle(i)) * centerRadius + center.x;
+            var y = sin(segmentAngle(i)) * centerRadius + center.y;
+            return translate(x,y);
+          });
+      
+        enter.append("svg:circle")
+          .style("fill",function(d,i) {
+            return segment(i)
+          })
+          .attr("opacity",0.6)
+          .attr("r",radius)
+          .on("mouseover",function() {
+            d3.select(this).transition().attr("r",radius + 5);
+          })
+          .on("mouseout",function() {
+            d3.select(this).transition().attr("r",radius);
+          })
+          ;
+      
+        enter.append("svg:text")
+          .text(plucker("name"))
+          .attr("transform",function(d,i) {
+            return translate(-this.offsetWidth/2,this.offsetHeight/2);
+          });
+        ;
+      
+        enter
+          .selectAll("text.children")
+          .data(plucker("children"))
+          .enter()
+          .append("g")
+            .attr("transform",function(d,i) {
+              var pindex = data.indexOf(d.parent);
+              var start = segmentAngle(pindex) - radsPerSegment / 2;
+              var end = segmentAngle(pindex) + radsPerSegment / 2;
+              var anglePerCategory = (end - start) / d.parent.children.length;
+              var angle = i * anglePerCategory + (anglePerCategory / 2) + start;
+              var textRadius = radius + 10;
+              d.angleRadians = angle;
+              return translate(cos(angle) * textRadius,sin(angle) * textRadius) + " rotate(" + angle * 57.2957795 + ")";
+            })
+            .append("text")
+            .text(plucker("name"))
+            .attr("transform",function(d) {
+              var piRads = d.angleRadians / PI;
+              if((piRads < -0.5 && piRads >= -1) || (piRads >= 0.5 && piRads < 1.5)) {
+                return "matrix(-1,0,0,-1," + this.clientWidth + ",0)";
+              } 
+              return "";
+            });
+      
+      
+      };
+      
+      venn({
+        data: data,
+        spread: 15,
+        width: 800,
+        height: 800,
+        radius: 120,
+      });
+      
+      }));
+    //]]>
+  </script>
+</section>
 <section>
   <h2>On the menu for today</h2>
   <ul id='menu'>
@@ -83,60 +246,42 @@
   </script>
 </section>
 <section class='subtitle'>
-  <h2>d3: what & why of d3</h2>
+  <h2>d3: what &amp; why of d3</h2>
 </section>
 <section>
   <h2>What - comparison</h2>
-  <div id='demo1'></div>
+  <div id='demo1'>
+    <div class='controls'>
+      <h2>Best at</h2>
+      <div class='radios'></div>
+    </div>
+    <div class='graphs'></div>
+  </div>
   <script type='text/javascript'>
     //<![CDATA[
       var data = [
         {"name":"jquery", data: [["dom",1], ["svg",0], ["data",0], ["open",0.7 ]]},
-        {"name":"d3", data: [ ["dom",0.8], ["svg",1], ["data",1], ["open",1 ]]},
-        {"name":"highcharts", data:[ ["dom",0], ["svg",1], ["data",1], ["open",0 ]]},
+        {"name":"d3", data: [ ["dom",0.6], ["svg",1], ["data",1], ["open",1 ]]},
+        {"name":"highcharts", data:[ ["dom",0], ["svg",0.1], ["data",0.6], ["open",0 ]]},
         {"name":"raphael", data: [["dom",0], ["svg",1], ["data",0], ["open",0.5 ]]},
         {"name":"processing", data:[ ["dom",0], ["svg",0], ["data",0.5], ["open",0.2 ]]}
       ];
       
       var titles = {
-        open: "Open - uses existing APIs",
+        open: "Uses existing APIs",
         dom: "DOM tools",
         svg: "SVG tools",
         data: "Facilities for working with data"
       };
       
-      var sections = d3.select("#demo1")
-        .append("div")
-        .classed("graphs",true)
-        .selectAll("div").data(data,ƒ("name"));
-      
-      sections.enter()
-          .append("div")
-          .classed("data-framework",true)
-          .append("h2")
-          .text(ƒ("name"))
-          ;
-      
-      var divs = sections.append("div")
-        .classed("graph",true)
-        .selectAll("div").data(ƒ("data"));
-            
-      var colors = d3.scale.category10();
-      var height = d3.scale.linear().domain([0,1]).range([1,600]);
-      divs.enter().append("div")
-        .text(ƒ(0))
-        .attr("class",ƒ(0))
-        .style("background",function(d,i) { return colors(i) })
-        .style("width",_.compose(height,ƒ(1)))
-      
-      // selection behaviour
       var reorder;
+      // selection behaviour
       var cats = data[0].data.map(function(d,i) { return { name: d[0], selected: i === 0 } });
       
-      var radios = d3.select("#demo1").append("div").classed("radios",true).selectAll("radio").data(cats).enter()
+      var radios = d3.select("#demo1 .radios").selectAll("radio").data(cats).enter()
         .append("label");
       
-        radios.append("input").attr("name","sort").attr("value",ƒ("name")).attr("type","radio").on("change",function(data) {
+        radios.append("input").attr("name","sort").attr("value",pluck("name")).attr("type","radio").on("change",function(data) {
           _.each(cats,function(c) { c.selected = false });
           data.selected = true;
           reorder();
@@ -156,7 +301,51 @@
       
       reorder = function() {
         var selected = getSelected().name;
-        sections.sort(function(a,b) { return b.dict[selected] - a.dict[selected] });
+        data = _.sortBy(data,function(d) {
+          return -d.dict[selected];
+        });
+        render();
+      };
+      
+      var render = function() {
+      
+        var sections = d3.select("#demo1 .graphs").selectAll("div");
+      
+        var bound = sections.data(data,pluck("name"));
+      
+        // update
+        bound.style("top",function(d,i) {
+          return i * 128 + "px";
+        });
+      
+        var enter = bound.enter()
+                      .append("div")
+                      .style("top",function(d,i) {
+                        return i * 128 + "px";
+                      })
+                      .classed("data-framework",true)
+                      ;
+      
+        enter.append("h2")
+            .text(pluck("name"))
+      
+            ;
+      
+        var colors = d3.scale.category10();
+        var height = d3.scale.linear().domain([0,1]).range([1,600]);
+      
+        var divs = enter.append("div")
+          .classed("graph",true)
+          .selectAll("div")
+          .data(pluck("data"));
+              
+        divs.enter().append("div")
+          .text(pluck(0))
+          .attr("class",pluck(0))
+          .style("background",function(d,i) { return colors(i) })
+          .style("width",_.compose(height,pluck(1)));
+      
+      
       };
       
       reorder();
@@ -164,26 +353,38 @@
   </script>
   <style>
     #demo1 {
-      font-size: 0.5em;
+      position: relative;
+      font-size: 0.25em;
       overflow: auto; }
+      #demo1 .data-framework {
+        -webkit-transition: all 0.5s;
+        position: absolute; }
       #demo1 h2 {
-        float: left;
-        width: 30%; }
+        text-align: left;
+        margin: 0 0 0.5em 0; }
+      #demo1 .graphs {
+        margin-left: 2em;
+        width: 40%;
+        height: 100%; }
       #demo1 .graph {
         float: left;
         margin-bottom: 1em; }
       #demo1 .data-framework {
         overflow: auto; }
-      #demo1 .radios {
+      #demo1 .controls {
         float: left;
-        width: 48%; }
+        width: 38%;
+        margin-left: 10%; }
+        #demo1 .controls h2 {
+          font-size: 3em; }
       #demo1 .graphs {
         float: left;
         width: 48%; }
       #demo1 label {
         display: block;
         font-size: 2em;
-        line-height: 2em; }
+        line-height: 2em;
+        cursor: pointer; }
       #demo1 input {
         margin-right: 2em; }
   </style>
@@ -265,7 +466,7 @@
 <section>
   <h2>Hierarchy</h2>
   <p>We can reflect a hierarchical set of data in elements</p>
-  <pre>var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div").data(data,ƒ("name"))&#x000A;&#x000A;sections.enter()&#x000A;    .append("div")&#x000A;    .classed("data-framework",true)&#x000A;    .append("h2")&#x000A;    .text(ƒ("name"))&#x000A;    ;&#x000A;</pre>
+  <pre>var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div").data(data,pluck("name"))&#x000A;&#x000A;sections.enter()&#x000A;    .append("div")&#x000A;    .classed("data-framework",true)&#x000A;    .append("h2")&#x000A;    .text(pluck("name"))&#x000A;    ;&#x000A;</pre>
   <p>In our framework comparison we had a set of frameworks each with 4 attributes.</p>
   <p>So we need a set of 5 elements each containing 4 elements.</p>
 </section>
@@ -350,7 +551,7 @@
   <p>If we change data, we need a way for d3 (and us) to know it's actually referring to the same thing.</p>
   <p>Initially datums are indentified by position in array - if we change order this breaks.</p>
   <p>Key fn tells d3 which of the values is a unique key.</p>
-  <pre>var data = [&#x000A;  {"name":"jquery", data: [["dom",1], ["svg",0], ["data",0], ["open",0.7 ]]},&#x000A;  {"name":"d3", data: [ ["dom",0.8], ["svg",1], ["data",1], ["open",1 ]]},&#x000A;  {"name":"highcharts", data:[ ["dom",0], ["svg",1], ["data",1], ["open",0 ]]},&#x000A;  {"name":"raphael", data: [["dom",0], ["svg",1], ["data",0], ["open",0.5 ]]},&#x000A;  {"name":"processing", data:[ ["dom",0], ["svg",0], ["data",0.5], ["open",0.2 ]]}&#x000A;];&#x000A;&#x000A;var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div").data(data,ƒ("name"))&#x000A;</pre>
+  <pre>var data = [&#x000A;  {"name":"jquery", data: [["dom",1], ["svg",0], ["data",0], ["open",0.7 ]]},&#x000A;  {"name":"d3", data: [ ["dom",0.8], ["svg",1], ["data",1], ["open",1 ]]},&#x000A;  {"name":"highcharts", data:[ ["dom",0], ["svg",1], ["data",1], ["open",0 ]]},&#x000A;  {"name":"raphael", data: [["dom",0], ["svg",1], ["data",0], ["open",0.5 ]]},&#x000A;  {"name":"processing", data:[ ["dom",0], ["svg",0], ["data",0.5], ["open",0.2 ]]}&#x000A;];&#x000A;&#x000A;var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div").data(data,pluck("name"))&#x000A;</pre>
 </section>
 <section>
   <h2>Loading data</h2>
