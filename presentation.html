@@ -555,7 +555,7 @@
 <section>
   <h2>Key functions</h2>
   <p>If we change data, we need a way for d3 (and us) to know it's actually referring to the same thing.</p>
-  <p>Initially datums are indentified by position in array - if we change order this breaks.</p>
+  <p>Initially datums are identified by position in array - if we change order this breaks.</p>
   <p>Key fn tells d3 which of the values is a unique key.</p>
   <pre>var data = [&#x000A;  {"name":"jquery", data: [["dom",1], ["svg",0], ["data",0], ["open",0.7 ]]},&#x000A;  {"name":"d3", data: [ ["dom",0.8], ["svg",1], ["data",1], ["open",1 ]]},&#x000A;  {"name":"highcharts", data:[ ["dom",0], ["svg",1], ["data",1], ["open",0 ]]},&#x000A;  {"name":"raphael", data: [["dom",0], ["svg",1], ["data",0], ["open",0.5 ]]},&#x000A;  {"name":"processing", data:[ ["dom",0], ["svg",0], ["data",0.5], ["open",0.2 ]]}&#x000A;];&#x000A;&#x000A;var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div").data(data,pluck("name"))&#x000A;</pre>
 </section>
@@ -567,7 +567,7 @@
 <section>
   <h2>Munging data</h2>
   <p>d3 includes the JS 1.6 array methods - `filter`, `map`, `reduce` etc</p>
-  <p>Similar functionailty to underscore.js - `nest` for `_.groupBy` etc</p>
+  <p>Similar functionality to underscore.js - `nest` for `_.groupBy` etc</p>
   <p>Lots of other useful methods - `extend` gives max and min - worth a read</p>
 </section>
 <section class='subtitle'>
