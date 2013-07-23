@@ -527,3 +527,8 @@ a {
 .subtitle h2 {
   font-size: 3em;
   margin-top: 2em; }
+
+.twitter {
+  text-align: center; }
+  .twitter a {
+    color: #1db4f1; }
