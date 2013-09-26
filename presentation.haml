@@ -439,6 +439,26 @@
 
   %p Use `transition` to apply changes over time.
 
+%section
+  %h2 Context
+
+  %p We need to be aware of which elements we're talking about
+
+  %pre
+    :preserve
+      // results in &lt;h2&gt;&lt;a&gt;&lt;span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+      d3.select("body")
+        .append("h2") // now we're in context of h2
+        .append("a") // so a ends up inside h2
+        .append("span"); // and span inside a
+
+      // results in &lt;h2&gt;&lt;a&gt;&lt;/a&gt;&lt;span&gt;&lt;/span&gt;&lt;/h2&gt;
+      var h2 = d3.select("body")
+        .append("h2");
+      h2.append("a");
+      h2.append("span");
+
+
 
 %section
   %h2 Events
@@ -451,8 +471,12 @@
         });
 
   %p Again, very similar to jQuery, `this` being DOM element.
+  %p `d3.event` holds current event
+  %p `this` for target DOM node
 
-  %p But what are those `data` and `index` parameters...?
+%section.subtitle
+
+  %h2 What are `data` and `index` doing where `event` is normally...?
 
 %section.subtitle
   %h2 We need to talk about data
@@ -503,28 +527,6 @@
 
   %p Why isn't this a waste of time?
 
-%section
-  %h2 Hierarchy
-
-  %p We can reflect a hierarchical set of data in elements
-
-  %pre
-    :preserve
-      var sections = d3.select("#demo1")
-        .append("div")
-        .classed("graphs",true)
-        .selectAll("div").data(data,pluck("name"))
-
-      sections.enter()
-          .append("div")
-          .classed("data-framework",true)
-          .append("h2")
-          .text(pluck("name"))
-          ;
-
-  %p In our framework comparison we had a set of frameworks each with 4 attributes.
-
-  %p So we need a set of 5 elements each containing 4 elements.
 
 %section#change
   %h2 Reflecting change
@@ -652,6 +654,29 @@
         .append("div")
         .classed("graphs",true)
         .selectAll("div").data(data,pluck("name"))
+
+%section
+  %h2 Hierarchy
+
+  %p We can reflect a hierarchical set of data in elements
+
+  %pre
+    :preserve
+      var sections = d3.select("#demo1")
+        .append("div")
+        .classed("graphs",true)
+        .selectAll("div").data(data,pluck("name"))
+
+      sections.enter()
+          .append("div")
+          .classed("data-framework",true)
+          .append("h2")
+          .text(pluck("name"))
+          ;
+
+  %p In our framework comparison we had a set of frameworks each with 4 attributes.
+
+  %p So we need a set of 5 elements each containing 4 elements.
 
 %section
   %h2 Loading data
@@ -798,17 +823,7 @@
 %section
   %h2 Hands on time
 
-  %p Great sources of data ready to go:
-
-  %ul
-    %li
-      %a{href:"http://data.gov.uk"} Public data - data.gov.uk
-    %li
-      %a{href:"http://musicbrainz.org/"} Music Brainz - Open data on music
-    %li
-      %a{href:"http://www.freebase.com/"} Freebase - graph of all the things, easy to query
-    %li
-      %a{href:"http://www.wikidata.org/wiki/Wikidata:Main_Page"} Wikidata - lots of open data
+  %p We'll be building a real-time visualisation using reddit data
 
   %p
     Tweet your work in progress
