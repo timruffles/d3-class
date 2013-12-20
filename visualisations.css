@@ -1,0 +1,35 @@
+#demo1 {
+  position: relative;
+  font-size: 0.25em;
+  overflow: auto; }
+  #demo1 .data-framework {
+    -webkit-transition: all 0.5s;
+    position: absolute; }
+  #demo1 h2 {
+    text-align: left;
+    margin: 0 0 0.5em 0; }
+  #demo1 .graphs {
+    margin-left: 2em;
+    width: 40%;
+    height: 100%; }
+  #demo1 .graph {
+    float: left;
+    margin-bottom: 1em; }
+  #demo1 .data-framework {
+    overflow: auto; }
+  #demo1 .controls {
+    float: left;
+    width: 38%;
+    margin-left: 10%; }
+    #demo1 .controls h2 {
+      font-size: 3em; }
+  #demo1 .graphs {
+    float: left;
+    width: 48%; }
+  #demo1 label {
+    display: block;
+    font-size: 2em;
+    line-height: 2em;
+    cursor: pointer; }
+  #demo1 input {
+    margin-right: 2em; }

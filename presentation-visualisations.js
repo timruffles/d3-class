@@ -7,9 +7,7 @@ var presentationTopicVenn = (function() {
       children: [
         { name: "d3.scale" },
         { name: "d3 array methods" },
-        { name: "d3 data loaders" },
-        { name: "unix" },
-        { name: "Google spreadsheet" },
+        { name: "d3 data loaders" }
       ]
     },
     {
@@ -18,15 +16,14 @@ var presentationTopicVenn = (function() {
         { name: "DOM" },
         { name: "SVG" },
         { name: "three.js" },
+        { name: "CSS & D3" }
       ]
     },
     {
-      name: "Design",
+      name: "Driven",
       children: [
-        { name: "Colour" },
         { name: "d3.layout" },
-        { name: "Principles" },
-        { name: "Process" }
+        { name: "d3.scale" },
       ]
     }
   ];
@@ -37,11 +34,6 @@ var presentationTopicVenn = (function() {
     });
   });
 
-  var plucker = function(v) {
-    return function(o) {
-      return o[v];
-    }
-  };
   var translate = function(x,y) {
     return "translate(" + x + "," + y + ")";
   };
@@ -101,7 +93,9 @@ var presentationTopicVenn = (function() {
       ;
 
     enter.append("svg:text")
-      .text(plucker("name"))
+      .text(function(d) {
+        return d.name
+      })
       .attr("transform",function(d,i) {
         return translate(-this.offsetWidth/2,this.offsetHeight/2);
       });
@@ -109,7 +103,9 @@ var presentationTopicVenn = (function() {
 
     enter
       .selectAll("text.children")
-      .data(plucker("children"))
+      .data(function(d) {
+        return d.children
+      })
       .enter()
       .append("g")
         .attr("transform",function(d,i) {
@@ -123,7 +119,9 @@ var presentationTopicVenn = (function() {
           return translate(cos(angle) * textRadius,sin(angle) * textRadius) + " rotate(" + angle * 57.2957795 + ")";
         })
         .append("text")
-        .text(plucker("name"))
+        .text(function(d) {
+          return d.name
+        })
         .attr("transform",function(d) {
           var piRads = d.angleRadians / PI;
           if((piRads < -0.5 && piRads >= -1) || (piRads >= 0.5 && piRads < 1.5)) {
@@ -178,7 +176,9 @@ var comparisons = {
   run: function() {
 
     var demoEl = d3.select("#demo1")
-    var controlsEl = demoEl.append(".controls")
+    var controlsEl = demoEl
+      .append("div")
+      .classed("controls",true)
     controlsEl.append("h2").text("Best at")
     controlsEl.append("div")
           .classed("radios",true)
@@ -208,17 +208,24 @@ var comparisons = {
     var radios = d3.select("#demo1 .radios").selectAll("radio").data(cats).enter()
       .append("label");
 
-      radios.append("input").attr("name","sort").attr("value",pluck("name")).attr("type","radio").on("change",function(data) {
-        _.each(cats,function(c) { c.selected = false });
-        data.selected = true;
-        reorder();
-      });
+      radios
+        .append("input")
+        .attr("name","sort")
+        .attr("value",function(d) {
+          return d.name
+        })
+        .attr("type","radio")
+        .on("change",function(data) {
+          cats.forEach(function(c) { c.selected = false });
+          data.selected = true;
+          reorder();
+        });
       document.querySelector("#demo1 input[value=dom]").checked = true;
       radios.append("span").text(function(d) { return titles[d.name] });
       
 
-    _.each(data,function(d) {
-      d.dict = _.reduce(d.data,function(h,kv) {
+    data.forEach(function(d) {
+      d.dict = d.data.reduce(function(h,kv) {
         h[kv[0]] = kv[1];
         return h;
       },{});
@@ -228,8 +235,8 @@ var comparisons = {
 
     reorder = function() {
       var selected = getSelected().name;
-      data = _.sortBy(data,function(d) {
-        return -d.dict[selected];
+      data = data.sort(function(a,b) {
+        return b.dict[selected] - a.dict[selected];
       });
       render();
     };
@@ -238,7 +245,7 @@ var comparisons = {
 
       var sections = d3.select("#demo1 .graphs").selectAll("div");
 
-      var bound = sections.data(data,pluck("name"));
+      var bound = sections.data(data,function(d) { return d.name })
 
       // update
       bound.style("top",function(d,i) {
@@ -254,7 +261,7 @@ var comparisons = {
                     ;
 
       enter.append("h2")
-          .text(pluck("name"))
+          .text(function(d) { return d.name })
 
           ;
 
@@ -264,64 +271,27 @@ var comparisons = {
       var divs = enter.append("div")
         .classed("graph",true)
         .selectAll("div")
-        .data(pluck("data"));
+        .data(function(d) {
+          return d.data
+        });
             
       divs.enter().append("div")
-        .text(pluck(0))
-        .attr("class",pluck(0))
+        .text(function(d) {
+          return d[0]
+        })
+        .attr("class",function(d) { return d[0] })
         .style("background",function(d,i) { return colors(i) })
-        .style("width",_.compose(height,pluck(1)));
+        .style("width",function(d) {
+          return height(d[1])
+        })
 
 
     };
 
     reorder();
-  },
-  css: "#demo1 {\
-    position: relative;\
-    font-size: 0.25em;\
-    overflow: auto; }\
-    #demo1 .data-framework {\
-      -webkit-transition: all 0.5s;\
-      position: absolute; }\
-    #demo1 h2 {\
-      text-align: left;\
-      margin: 0 0 0.5em 0; }\
-    #demo1 .graphs {\
-      margin-left: 2em;\
-      width: 40%;\
-      height: 100%; }\
-    #demo1 .graph {\
-      float: left;\
-      margin-bottom: 1em; }\
-    #demo1 .data-framework {\
-      overflow: auto; }\
-    #demo1 .controls {\
-      float: left;\
-      width: 38%;\
-      margin-left: 10%; }\
-      #demo1 .controls h2 {\
-        font-size: 3em; }\
-    #demo1 .graphs {\
-      float: left;\
-      width: 48%; }\
-    #demo1 label {\
-      display: block;\
-      font-size: 2em;\
-      line-height: 2em;\
-      cursor: pointer; }\
-    #demo1 input {\
-      margin-right: 2em; }"
-}
-
-function pluck(v) {
-  var args = [].slice.call(arguments,1);
-  return function(d) {
-    return typeof(d[v]) === "function" ? d[v].apply(d,args) : d[v];
   }
 }
 
-function I(x) { return x }
 
 function px(fn) {
   return function() {
@@ -350,15 +320,6 @@ function revealCode(id,fn) {
   pre.innerText = code;
   fn(code,pre,el); 
   prettyPrint();
-}
-
-var peeks = 0;
-function peek(fn,name) {
-  name || (name = "peek" + (++peeks));
-  return function() {
-    console.log(name,arguments);
-    return fn.apply(null,arguments);
-  }
 }
 
 function setupExamples() {
