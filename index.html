@@ -437,6 +437,9 @@
   <p>`this` for target DOM node</p>
 </section>
 <section class='subtitle'>
+  <h2>Code: selecting elements</h2>
+</section>
+<section class='subtitle'>
   <h2>What are `data` and `index` doing where `event` is normally...?</h2>
 </section>
 <section class='subtitle'>
@@ -542,19 +545,19 @@
   <p>Updates apply when you have both an element and a datum</p>
   <p>Rerun the selection when adding data, attributes will be updated</p>
   <p>Use transitions to move smoothly to the new values</p>
-  <pre>d3.selectAll("div") // 1 div&#x000A;  .data([1,2,3,4])&#x000A;  // will act on the first div, passing 1&#x000A;  .text(function(d) { &#x000A;    return "I'm updating " + 1 // I'm updating 1&#x000A;   }) &#x000A;</pre>
+  <pre>var update = d3.selectAll("div") // 1 div&#x000A;  .data([1,2,3,4])&#x000A;  // will act on the first div, passing 1&#x000A;  .text(function(d) { &#x000A;    return "I'm updating " + 1 // I'm updating 1&#x000A;   }) &#x000A;</pre>
 </section>
 <section>
   <h2>Enter</h2>
   <p>New data that doesn't fit into the current selection goes into enter</p>
   <p>eg:</p>
-  <pre>d3.selectAll("div") // 1 div&#x000A;  .data([1,2,3,4])&#x000A;&#x000A;d3.enter() // will act on [2,3,4], appending 3 divs&#x000A;  .append("div") &#x000A;</pre>
+  <pre>var update = d3.selectAll("div") // 1 div&#x000A;  .data([1,2,3,4])&#x000A;&#x000A;var enter = update.enter() // will act on [2,3,4], appending 3 divs&#x000A;  .append("div") &#x000A;</pre>
 </section>
 <section>
   <h2>Exit</h2>
   <p>Elements that no longer have a datum will go into exit</p>
   <p>eg:</p>
-  <pre>d3.selectAll("div") // 5 divs&#x000A;  .data([1])&#x000A;&#x000A;d3.exit() // will affect the other 4 divs, removing them&#x000A;  .remove()&#x000A;</pre>
+  <pre>var update = d3.selectAll("div") // 5 divs&#x000A;  .data([1])&#x000A;&#x000A;var exit = update.exit() // will affect the other 4 divs, removing them&#x000A;  .remove()&#x000A;</pre>
 </section>
 <section>
   <h2>Join demo</h2>
@@ -591,6 +594,9 @@
     <script src=join-viz.js></script>
   </div>
 </section>
+<section class='subtitle'>
+  <h1>Code: our first data-viz</h1>
+</section>
 <section>
   <h2>Key functions</h2>
   <p>If we change data, we need a way for d3 (and us) to know it's actually referring to the same thing.</p>
@@ -615,6 +621,9 @@
   <p>d3 includes the JS 1.6 array methods - `filter`, `map`, `reduce` etc</p>
   <p>Similar functionality to underscore.js - `nest` for `_.groupBy` etc</p>
   <p>Lots of other useful methods - `extend` gives max and min - worth a read</p>
+</section>
+<section class='subtitle'>
+  <h2>Code: sorting &amp; transitions</h2>
 </section>
 <section class='subtitle'>
   <h2>Scales</h2>
@@ -714,9 +723,7 @@
   <h2>Hands on time</h2>
   <p>We'll be building a real-time visualisation using reddit data</p>
   <p>
-    Tweet your work in progress
-    <a href='http://twitter.com/ga_london'>@GA_London</a>
-    , ask me how to setup a github page to host it.
+    Tweet your work in progress, ask me how to setup a github page to host it.
   </p>
 </section>
 <script src='prettify.js'></script>
