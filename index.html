@@ -1,6 +1,8 @@
 <meta encoding='utf-8' />
 <title>Visualising Data Using Javascript</title>
+<link href='css/normalise.css' rel='stylesheet' />
 <link href='css/screen.css' rel='stylesheet' />
+<link href='css/prettify.css' rel='stylesheet' />
 <script src='underscore.js'></script>
 <script src='d3.js'></script>
 <script src='treemap.js'></script>
@@ -552,7 +554,42 @@
   <h2>Exit</h2>
   <p>Elements that no longer have a datum will go into exit</p>
   <p>eg:</p>
-  <pre>d3.selectAll("div") // 5 divs&#x000A;  .data([1])&#x000A;&#x000A;d3.exit() // will affect the other 4 divs, removing them&#x000A;  .remove()&#x000A;&#x000A;</pre>
+  <pre>d3.selectAll("div") // 5 divs&#x000A;  .data([1])&#x000A;&#x000A;d3.exit() // will affect the other 4 divs, removing them&#x000A;  .remove()&#x000A;</pre>
+</section>
+<section>
+  <h2>Join demo</h2>
+  <div id='join-demo'>
+    <div class=els>
+    <h2>Situation</h2>
+    <h3>Elements</h3>
+    <button class=addEl>Add element</button>
+    <button class=removeEl>Remove element</button>
+    <div class=strip id=elements></div>
+    <h3>Data</h3>
+    <button class=addData>Add data</button>
+    <button class=removeData>Remove element</button>
+    <div class=strip id=data></div>
+    </div>
+    <div id=contexts>
+    <h2>Contexts</h2>
+    <div class=context>
+    <h3>Update</h3>
+    <code>update context (returned by .data())</code>
+    <div class=strip id=update></div>
+    </div>
+    <div class=context>
+    <h3>Enter</h3>
+    <code>.enter()</code>
+    <div class=strip id=enter></div>
+    </div>
+    <div class=context>
+    <h3>Exit</h3>
+    <code>.exit()</code>
+    <div class=strip id=exit></div>
+    </div>
+    </div>
+    <script src=join-viz.js></script>
+  </div>
 </section>
 <section>
   <h2>Key functions</h2>
