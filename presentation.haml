@@ -477,6 +477,9 @@
   %p `this` for target DOM node
 
 %section.subtitle
+  %h2 Code: selecting elements
+
+%section.subtitle
 
   %h2 What are `data` and `index` doing where `event` is normally...?
 
@@ -595,7 +598,7 @@
 
   %pre
     :preserve
-      d3.selectAll("div") // 1 div
+      var update = d3.selectAll("div") // 1 div
         .data([1,2,3,4])
         // will act on the first div, passing 1
         .text(function(d) { 
@@ -611,10 +614,10 @@
 
   %pre
     :preserve
-      d3.selectAll("div") // 1 div
+      var update = d3.selectAll("div") // 1 div
         .data([1,2,3,4])
 
-      d3.enter() // will act on [2,3,4], appending 3 divs
+      var enter = update.enter() // will act on [2,3,4], appending 3 divs
         .append("div") 
 
 %section
@@ -626,10 +629,10 @@
 
   %pre
     :preserve
-      d3.selectAll("div") // 5 divs
+      var update = d3.selectAll("div") // 5 divs
         .data([1])
 
-      d3.exit() // will affect the other 4 divs, removing them
+      var exit = update.exit() // will affect the other 4 divs, removing them
         .remove()
 
 %section
@@ -677,6 +680,9 @@
 
     </div>
     <script src=join-viz.js></script>
+
+%section.subtitle
+  %h1 Code: our first data-viz
 
 
 %section
@@ -749,6 +755,10 @@
   %p Similar functionality to underscore.js - `nest` for `_.groupBy` etc
 
   %p Lots of other useful methods - `extend` gives max and min - worth a read
+
+
+%section.subtitle
+  %h2 Code: sorting &amp; transitions
 
 
 %section.subtitle
