@@ -7,7 +7,8 @@ var previousData;
 
 function getData() {
   d3.jsonp(
-   "http://reddit.com/.json?jsonp=handleData&cb=" + Math.random()
+   "http://reddit.com/.json?jsonp={callback}",
+   handleData
   );
 }
 
