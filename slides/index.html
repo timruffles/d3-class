@@ -602,7 +602,10 @@
   <p>If we change data, we need a way for d3 (and us) to know it's actually referring to the same thing.</p>
   <p>Initially datums are identified by position in array - if we change order this breaks.</p>
   <p>Key fn tells d3 which of the values is a unique key.</p>
-  <pre>var data = [&#x000A;  {"name":"jquery", data: [["dom",1], ["svg",0], ["data",0], ["open",0.7 ]]},&#x000A;  {"name":"d3", data: [ ["dom",0.8], ["svg",1], ["data",1], ["open",1 ]]},&#x000A;  {"name":"highcharts", data:[ ["dom",0], ["svg",1], ["data",1], ["open",0 ]]},&#x000A;  {"name":"raphael", data: [["dom",0], ["svg",1], ["data",0], ["open",0.5 ]]},&#x000A;  {"name":"processing", data:[ ["dom",0], ["svg",0], ["data",0.5], ["open",0.2 ]]}&#x000A;];&#x000A;&#x000A;var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div").data(data,pluck("name"))&#x000A;</pre>
+</section>
+<section>
+  <h2>Creating a key function</h2>
+  <pre>var data = [&#x000A;  {"name":"jquery", data: [["dom",1], ["svg",0], ["data",0], ["open",0.7 ]]},&#x000A;  {"name":"d3", data: [ ["dom",0.8], ["svg",1], ["data",1], ["open",1 ]]},&#x000A;  {"name":"highcharts", data:[ ["dom",0], ["svg",1], ["data",1], ["open",0 ]]},&#x000A;  {"name":"raphael", data: [["dom",0], ["svg",1], ["data",0], ["open",0.5 ]]},&#x000A;  {"name":"processing", data:[ ["dom",0], ["svg",0], ["data",0.5], ["open",0.2 ]]}&#x000A;];&#x000A;&#x000A;var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div").data(data,function(datum) {&#x000A;    return datum.name;&#x000A;  });&#x000A;</pre>
 </section>
 <section>
   <h2>Hierarchy</h2>
@@ -620,7 +623,11 @@
   <h2>Munging data</h2>
   <p>d3 includes the JS 1.6 array methods - `filter`, `map`, `reduce` etc</p>
   <p>Similar functionality to underscore.js - `nest` for `_.groupBy` etc</p>
-  <p>Lots of other useful methods - `extend` gives max and min - worth a read</p>
+</section>
+<section>
+  <h2>Mins and maxes</h2>
+  <p><code>d3.extent()</code>, <code>d3.min()</code>, <code>d3.max()</code></p>
+  <pre>var data = [{value: 45},{value: 10},{value: 50}];&#x000A;d3.extent(data,function(datum) {&#x000A;  return datum.value&#x000A;});&#x000A;// [10,50]&#x000A;&#x000A;</pre>
 </section>
 <section class='subtitle'>
   <h2>Code: sorting &amp; transitions</h2>
@@ -631,7 +638,7 @@
 <section>
   <h2>Functional scales</h2>
   <p>d3 can create our scales, so we don't need to.</p>
-  <pre>var mapping = d3.scale.linear()&#x000A;  .domain([d3.min(data), d3.max(data)])&#x000A;  .range([0,VISUAL_SIZE_DESIRED]);&#x000A;</pre>
+  <pre>var mapping = d3.scale.linear()&#x000A;  .domain([SMALLEST_INPUT,LARGEST_INPUT])&#x000A;  .range([SMALLEST_OUTPUT,LARGEST_OUTPUT]);&#x000A;</pre>
   <p>Has built in colour scales that look lovely</p>
 </section>
 <section>
@@ -641,9 +648,15 @@
   <p>We map between them</p>
 </section>
 <section>
+  <h2>Domain: input, range: output</h2>
+  <div style='text-align: center'>
+    <img src='img/scales.png' />
+  </div>
+</section>
+<section>
   <h2>First page menu</h2>
   <p>Simple colour scale with steps.</p>
-  <pre>var data = [0.05,0.1,0.1,0.1,0.1,0.1,0.45];&#x000A;&#x000A;var colors = d3.scale.linear().domain([0,data.length - 1]).range(["#69C7FF","#3593E6"])&#x000A;d3.select("#menu").selectAll("li").data(data)&#x000A;  .append("div")&#x000A;  .style("width",function(d) { return (d * 100).toFixed(0) + "%" })&#x000A;  .style("height","16")&#x000A;  .style("background",function(d,i) { return colors(i) });&#x000A;</pre>
+  <pre>var data = [0.05,0.1,0.1,0.1,0.1,0.1,0.45];&#x000A;&#x000A;// create scale&#x000A;var colors = d3.scale.linear().domain([0,data.length - 1])&#x000A;// clever inteporlation!&#x000A;  .range(["#69C7FF","#3593E6"])&#x000A;// further config&#x000A;  .clamp()&#x000A;&#x000A;d3.select("#menu").selectAll("li").data(data)&#x000A;  .append("div")&#x000A;  .style("background",function(d,i) { return colors(i) });&#x000A;</pre>
 </section>
 <section class='subtitle'>
   <h2>Layouts</h2>
@@ -659,7 +672,7 @@
   <div id='histogram-1'></div>
   <script type='text/javascript'>
     //<![CDATA[
-      onPage("layout-demo",function() {
+      onPage("layout-demo",_.once(function() {
       
         var randomData = d3.range(1000).map(d3.random.irwinHall(10));
       
@@ -690,17 +703,17 @@
             .attr("width", x(data[0].dx) - 1)
             .attr("height", function(d) { return height - y(d.y); });
       
-      });
+      }));
     //]]>
   </script>
   <div class='demo-code'></div>
   <script type='text/javascript'>
     //<![CDATA[
-      onPage("layout-demo",function() {
+      onPage("layout-demo",_.once(function() {
         revealCode("layout-demo",function(code,pre) {
           d3.select("#layout-demo .demo-code")[0][0].appendChild(pre); 
         }) 
-      });
+      }));
     //]]>
   </script>
   <style>
