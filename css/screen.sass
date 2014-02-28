@@ -6,10 +6,43 @@ $orange: hsl(27, 100%, 54%)
 $yellow: hsl(60, 100%, 51%)
 $green: hsl(85, 100%, 58%)
 
-body
-  font-size: 56px
-  background: -webkit-radial-gradient(center, ellipse cover, #fffff9 0%,#ffffea 100%)
+@font-face
+  font-family: "Exo"
+  src: url(./fonts/Exo-Light.ttf)
+  font-weight: 400
+
+
+@font-face
+  font-family: Exo
+  src: url(./fonts/Exo-Thin.ttf)
   font-weight: 100
+
+
+@font-face
+  font-family: Exo
+  src: url(fonts/Exo-ExtraLight.ttf)
+  font-weight: 200
+
+
+@font-face
+  font-family: Exo
+  src: url(fonts/Exo-Regular.ttf)
+  font-weight: 800
+
+
+body
+  box-sizing: border-box
+  background: rgb(250, 250, 250)
+  color: #222
+  font-family: Exo
+  font-size: 48px
+
+h1, h2, h3
+  font-weight: 200
+  text-align: left
+  color: #19B8D2
+  line-height: 1.125em
+  margin-bottom: 0.25em
 
 .hl
   color: #910000
@@ -26,7 +59,6 @@ h1
   text-align: center
 
 h2
-  margin-top: .25em
   text-align: center
 
 section
@@ -92,6 +124,7 @@ table
 
 pre
   background: rgba(255,255,255,0.5)
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3)
   padding: .5em
 
 a
@@ -106,10 +139,33 @@ $colours: crimson, darkorange, gold, greenyellow, mediumpurple, violet
     color: nth($colours,$i)
 
 .subtitle h2
-  font-size: 3em
-  margin-top: 2em
+  font-size: 2.5em
 
 .twitter
   text-align: center
   a
     color: #1db4f1
+
+#join-demo
+  font-size: 2rem
+  overflow: auto
+  padding: 2em
+  .context
+    height: 6em
+  .strip
+    padding: 4px
+    margin: 4px
+    background: rgba(255, 255, 255, 0.4)
+    height: 1.5em
+    max-width: 15em
+  .els, #contexts
+    float: left
+    width: 50%
+  p
+    display: inline-block
+    background: #444
+    color: #444
+    border-radius: 2px
+    margin: 2px
+    width: 10px
+    
