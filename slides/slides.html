@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Introduction to D3</title>
-  
+
     <link rel="stylesheet" href="reveal/css/reveal.min.css">
     <link rel="stylesheet" href="reveal/lib/css/github.css">
 
@@ -86,10 +86,55 @@
 
 <section data-markdown ><script type="text/template">
 
-# Any other questions?
+## Philosophy
+
+Not propriatory - you can use what you learn about SVG, HTML and CSS everywhere.
+
+Mobile friendly (HTML everywhere, SVG iOS, Android Browser 3.0+).
+
+Less to learn - not a big scary black box.
+
+</script></section>
 
 
-## @timruffles, @sidekicksrc
+<section data-markdown ><script type="text/template">
+
+## Selecting elements
+
+</script></section>
+
+
+<section data-markdown ><script type="text/template">
+
+## API
+
+<pre>
+    <code>
+        d3.select("body")
+          .append("h2")
+          .text("foo")
+          .transition()
+            .style("color","red");
+
+        d3.select("p")
+          .style("font-size","2em")
+          .append("span")
+            .text("I'm a span in a paragraph");
+    </code>
+</pre>
+
+</script></section>
+
+
+<section data-markdown ><script type="text/template">
+
+## Chaining
+
+Just like jQuery, we can keep calling methods on the same elements.
+
+If we create new elements via append, the context of our chain becomes the new elements.
+
+Use `transition` to apply changes over time.
 
 </script></section>
 
@@ -170,5 +215,3 @@
   });
 </script>
 </body>
-
-
