@@ -1,0 +1,21 @@
+#join-demo {
+  font-size: 2rem;
+  overflow: auto;
+  padding: 2em;
+}
+
+#join-demo .els, #join-demo #contexts {
+  float: left;
+  width: 50%;
+}
+
+#join-demo p {
+  display: inline-block;
+  background: #444444;
+  color: #444444;
+  border-radius: 2px;
+  margin: 2px;
+  width: 10px;
+  padding-left: 2.5%;
+  padding-right: 2.5%;
+}
