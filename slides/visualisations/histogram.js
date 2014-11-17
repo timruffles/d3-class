@@ -1,5 +1,5 @@
-var histogram = {
-    run: function() {
+var histogram = (function() {
+    var drawHistogram = function() {
         var randomData = d3.range(1000).map(d3.random.irwinHall(10));
 
         var width = 800;
@@ -29,4 +29,13 @@ var histogram = {
                 .attr("width", x(data[0].dx) - 1)
                 .attr("height", function(d) { return height - y(d.y); });
     }
-}
+
+    return {
+        run: function() {
+            drawHistogram();
+
+            var codeElem = d3.select("#demo-code-37").append("pre").append("code");
+            revealCodeByXhr('visualisations/histogram.js', codeElem[0][0]);
+        }
+    }
+}());

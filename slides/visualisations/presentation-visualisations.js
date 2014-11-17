@@ -29,6 +29,38 @@ function revealCode(id,fn) {
   prettyPrint();
 }
 
+function revealCodeByXhr(src, element) {
+    function getXHR(){
+        if (typeof XMLHttpRequest !== 'undefined') {
+            return new XMLHttpRequest();
+        }
+        else {
+            try {
+                return new ActiveXObject("Msxml2.XMLHTTP");
+            } 
+            catch (e) {
+                try {
+                    return new ActiveXObject("Microsoft.XMLHTTP");
+                } 
+                catch (e) {
+                }
+            }
+        }
+        
+        throw new Exception("XHR isn't supported by your browser");
+    }
+
+    var xhr = getXHR();
+    xhr.open('GET', src, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            element.innerHTML = xhr.responseText;
+            hljs.highlightBlock(element);
+        }
+    }
+    xhr.send(null);
+}
+
 function setupExamples() {
   var cbs = window.revealPluginMardownCallbacks = window.revealPluginMardownCallbacks || []
 
