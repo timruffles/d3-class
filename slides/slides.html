@@ -190,6 +190,62 @@ Again, very similar to jQuery, `this` being DOM element.
 
 <section data-markdown><script type="text/template">
 
+## Code: selecting elements
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## What are \`data\` and \`index\` doing where \`event\` is normally...?
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## We need to talk about data
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Data
+
+<ul>
+  <li>d3 gets data in front of users by binding it to elements.</li>
+  <li class="fragment">You can then use it to dynamically setup attributes *</li>
+  <li class="fragment">It&quot;ll be passed to your event handers</li>
+</ul>
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Joins
+
+In the code for the comparison, before we have any data we select all divs.
+
+Why are we binding to elements that don&quot;t exist?
+
+<pre>
+  <code>
+    var sections = d3.select("#demo1")
+        .append("div")
+        .classed("graphs",true)
+        .selectAll("div")
+  </code>
+</pre>
+
+Why isn&quot;t this a waste of time?
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
 ## Reflecting change
 
 Three types - new data, change in values, data leaving
