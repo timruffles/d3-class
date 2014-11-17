@@ -35,8 +35,11 @@ var reflectingChange = (function() {
         run: function() {
             d3.select("#change-btn").on("click", draw);
             draw();
+        },
+
+        showDemoCode: function(el) {
             setTimeout(function() {
-                var codeElem = d3.select("#demo-code-17").append("pre").append("code");
+                var codeElem = d3.select("#demo-code-17 code");
                 revealCodeByXhr('visualisations/reflecting-change.js', codeElem[0][0]);
             }, 2500);
         }

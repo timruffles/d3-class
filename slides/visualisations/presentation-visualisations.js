@@ -89,7 +89,11 @@ function example(vizRegistry,el) {
   vizRegistry[pageNum] = vizRegistry[pageNumber] || []
   vizRegistry[pageNum].push(function() {
     el.innerHTML = ""
-    viz.run(el)
+    viz.run(el);
+
+    if (typeof viz.showDemoCode === "function") {
+        viz.showDemoCode(el);
+    }
   })
 }
 function pageNumber(el) {

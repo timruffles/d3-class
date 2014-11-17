@@ -33,8 +33,10 @@ var histogram = (function() {
     return {
         run: function() {
             drawHistogram();
+        },
 
-            var codeElem = d3.select("#demo-code-37").append("pre").append("code");
+        showDemoCode: function(el) {
+            var codeElem = d3.select("#demo-code-37 code");
             revealCodeByXhr('visualisations/histogram.js', codeElem[0][0]);
         }
     }
