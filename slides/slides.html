@@ -13,7 +13,7 @@
 
 <body>
 
-<div class="reveal">
+<div class="reveal" style="overflow-y: auto;">
 <div class="slides">
 
 <section data-markdown ><script type="text/template">
@@ -168,7 +168,7 @@ We need to be aware of which elements we're talking about
 
 ## Events
 
-We need to be aware of which elements we're talking about
+We need to be aware of which elements we&quot;re talking about
 
 <pre>
     <code>
@@ -188,6 +188,18 @@ Again, very similar to jQuery, `this` being DOM element.
 </script></section>
 
 
+<section data-markdown><script type="text/template">
+
+## Reflecting change
+
+Three types - new data, change in values, data leaving
+
+<div id="change-demo" viz="reflectingChange"></div>
+<button id="change-btn">Change</button>
+
+</script></section>
+
+
 </div>
 </div>
 
@@ -196,6 +208,8 @@ Again, very similar to jQuery, `this` being DOM element.
 <script src=visualisations/venn.js></script>
 <script src=visualisations/comparison-bars.js></script>
 <script src=visualisations/presentation-visualisations.js></script>
+<!-- <script src=states/reflecting-change.js></script> -->
+<script src=visualisations/reflecting-change.js></script>
 
 <script src="reveal/lib/js/head.min.js"></script>
 <script src="reveal/js/reveal.min.js"></script>
@@ -262,5 +276,7 @@ Again, very similar to jQuery, `this` being DOM element.
     ]
 
   });
+
+  Reveal.addEventListener('slide-18', reflectingChange, false );
 </script>
 </body>
