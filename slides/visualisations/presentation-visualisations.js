@@ -100,7 +100,8 @@ function pageNumber(el) {
   var current = el
   while(current && (current != document.body) && (current = el.parentNode)) {
     if(current.tagName.toLowerCase() == "section") {
-      var index = [].indexOf.call(current.parentNode.children,current)
+      var sections = current.parentNode.querySelectorAll("section");
+      var index = [].indexOf.call(sections, current)
       return index
     }
   }

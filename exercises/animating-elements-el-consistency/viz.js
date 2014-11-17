@@ -4,33 +4,18 @@ var data = [
 	{id: 2, name: "Banana"}
 ];
 
-var yAxis = d3.scale.linear().domain([0,data.length - 1])
-							 .range(["3em","5em"]);
-
+// this is called when you click 'jumble'
 function updateUi() {
 	
-	data = data.sort(function() { return Math.random() - 0.5 })
+	d3.shuffle(data);
+  console.log(JSON.stringify(data));
 	
-	// select fruit
+	// TODO select fruit and bind all data
 	var update = d3.select("#fruit")
-    	.selectAll("li")
-		.data(data,function(data,index){
-			return data.id;
-		});
+    	.selectAll("li");
 		
-	// enter context
-	update.enter()
-    	.append("li")
-		
-    // both ENTER & UPDATE
-	update
-		.style("top",function(d,i){
-			return yAxis(i);
-		})
-		.text(function(d,i) {
-			return d.name + " " + i
-		});
+	// TODO create els
+  // TODO set top based on index
 }
-
 
 updateUi();

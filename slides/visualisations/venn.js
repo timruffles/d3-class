@@ -13,7 +13,6 @@ var presentationTopicVenn = (function() {
       children: [
         { name: "DOM" },
         { name: "SVG" },
-        { name: "three.js" },
         { name: "CSS & D3" }
       ]
     },

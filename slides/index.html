@@ -1,743 +1,1525 @@
-<meta encoding='utf-8' />
-<title>Visualising Data Using Javascript</title>
-<link href='css/normalise.css' rel='stylesheet' />
-<link href='css/screen.css' rel='stylesheet' />
-<link href='css/prettify.css' rel='stylesheet' />
-<script src='underscore.js'></script>
-<script src='d3.js'></script>
-<script src='treemap.js'></script>
-<script type='text/javascript'>
-  //<![CDATA[
-    function pluck(v) {
-      var args = [].slice.call(arguments,1);
-      return function(d) {
-        return typeof(d[v]) === "function" ? d[v].apply(d,args) : d[v];
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Introduction to D3</title>
+
+    <link rel="stylesheet" href="reveal/css/reveal.min.css">
+    <link rel="stylesheet" href="reveal/lib/css/github.css">
+
+    <link rel="stylesheet" href="slides-theme/style.css" id="theme">
+    <link rel="stylesheet" href="visualisations.css" id="theme">
+    <link rel="stylesheet" href="css/join-demo.css">
+
+    <link rel="stylesheet" href="slides-theme/js/little-console.css">
+    <link rel="stylesheet" href="visualisations/d3-contexts-explained.css" type="text/css" media="screen" charset="utf-8">
+
+    <script>
+      var revealPluginMardownCallbacks = [];
+      function whenMarkdownRendered(fn) {
+        revealPluginMardownCallbacks.push(fn);
       }
-    }
+    </script>
     
-    function I(x) { return x }
-    
-    function px(fn) {
-      return function() {
-        return fn.apply(null,arguments) + "px"
-      }
-    };
-    
-    var onPageCbs = [];
-    var onPage = function (page,fn) {
-      onPageCbs.push([page,fn])
-    }
-    
-    function revealCode(id,fn) {
-      var el = document.getElementById(id); 
-      fn || (fn = function(code,script,page) {
-        page.appendChild(script);
-      });
-      // first script
-      var script = el.querySelector("script");
-      var code = script.innerText
-        .split("\n")
-        .slice(3) // remove cdata & onPage
-        .slice(0,-3) // remove cdata & onPage
-        .map(function(s) { return s.replace(/^    /,"") }).join("\n");
-      var pre = document.createElement("pre");
-      pre.innerText = code;
-      fn(code,pre,el); 
-      prettyPrint();
-    }
-    
-    var peeks = 0;
-    function peek(fn,name) {
-      name || (name = "peek" + (++peeks));
-      return function() {
-        console.log(name,arguments);
-        return fn.apply(null,arguments);
-      }
-    }
-  //]]>
-</script>
+
+</head>
+
+<body>
+
+<div class="reveal">
+<div class="slides">
+
+<section data-markdown><script type="text/template">
+# Visualising Data with D3
+
+
+[@timruffles](http://twitter.com/timruffles)
+
+[SidekickJS](https://www.sidekickjs.com)
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+# Hello
+
+- https://github.com/timruffles/d3-class
+- Code + slides up above - clone if you've got `git`, or grab the `.zip`.
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## We'll be covering
+
+<div id=venn viz=presentationTopicVenn></div>
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Agenda
+
+<ul id=menu>
+  <li>d3: what & why</li>
+  <li>Selecting elements</li>
+  <li>Binding data</li>
+  <li>Scales</li>
+  <li>Layouts</li>
+</ul>
+
+<div viz=agenda></div>
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## How
+
+- I'll talk
+- we'll do exercises
+- when we're happy, we move on
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## What and why of d3
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+##  What - comparison
+
+<div id=comparisons viz=comparisons></div>
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Big ideas
+
+- Use the web platform
+- D3 is for rolling your own
+- Visualisation as theatre
+
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+
+## Big idea 1: web platform
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## BYO Knowledge
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Built on existing APIs
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Knowledge of HTML, CSS, SVG & rest of DOM
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+## Big idea 2: roll your own
+</script></section>
+
+<section data-markdown><script type="text/template">
+## D3 is a new way to do charts
+- power to your data
+- power to your design
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Primitives for rolling your own
+</script></section>
+
+<section data-markdown><script type="text/template">
+## No pre-made visualisations
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Plays well with everything
+</script></section>
+
+<section data-markdown><script type="text/template">
+## No enforced structure to your data
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Freedom!
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+## Big idea 3: visualisation as theatre
+</script></section>
+
+
+<section data-markdown data-state=title><script type="text/template">
+## Let's play
+</script></section>
+
+<section data-markdown><script type="text/template">
+## What's the DOM?
+</script></section>
+
+<section data-markdown ><script type="text/template">
+## HTML
+</script></section>
+
+<section data-markdown ><script type="text/template">
+## CSS
+</script></section>
+
+<section data-markdown><script type="text/template">
+## D3 manipulates the DOM, driven by data
+</script></section>
+
+<section data-markdown ><script type="text/template">
+## ...manipulates the DOM...
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+## First: select your elements
+</script></section>
+
+<section data-markdown ><script type="text/template">
+## `d3.select()`
+
+- `d3.select(".some-css-here")`
+- select a single element
+</script></section>
+
+<section data-markdown ><script type="text/template">
+## `d3.selectAll()`
+
+- `d3.select(".some-css-here")`
+- select all matching elements
+</script></section>
+
 <section>
-  <h1>Visualising Data Using Javascript</h1>
-  <h2>
-    Tim Ruffles -
-    <a href='https://www.sidekickjs.com'>SidekickJS</a>
-  </h2>
-  <h3 class='twitter'>
-    <a href='https://twitter.com/timruffles'>@timruffles</a>
-  </h3>
+
+  <h3>Selecting</h3>
+  <script type=code-example-alongside>
+    <h3 class=selecting></h3>
+    <h3 class=selecting></h3>
+  </script>
+  <div class=little-console></div>
+
+  <script type=cheat>
+    d3.selectAll(".selecting").text("hi");
+  </script>
+
 </section>
-<section id='intro-venn'>
-  <h2 id='covering'>
-    We'll be covering
-  </h2>
-  <div id='venn'></div>
-  <style>
-    #venn {
-      font-size: 0.35em; }
-    
-    #covering {
-      float: right;
-      width: 30%; }
-  </style>
-  <script type='text/javascript'>
-    //<![CDATA[
-      onPage("intro-venn",_.once(function() {
-      
-      var data = [
-        {
-          name: "Data",
-          children: [
-            { name: "d3.scale" },
-            { name: "d3 array methods" },
-            { name: "d3 data loaders" },
-            { name: "unix" },
-            { name: "Google spreadsheet" },
-          ]
-        },
-        {
-          name: "Documents",
-          children: [
-            { name: "DOM" },
-            { name: "SVG" },
-            { name: "three.js" },
-          ]
-        },
-        {
-          name: "Design",
-          children: [
-            { name: "Colour" },
-            { name: "d3.layout" },
-            { name: "Principles" },
-            { name: "Process" }
-          ]
-        }
-      ];
-      
-      data.forEach(function(d) {
-        d.children.forEach(function(c) {
-          c.parent = d;
-        });
-      });
-      
-      var plucker = function(v) {
-        return function(o) {
-          return o[v];
-        }
-      };
-      var translate = function(x,y) {
-        return "translate(" + x + "," + y + ")";
-      };
-      
-      var venn = function(opts) {
-      
-        var data = opts.data;
-        var spread = opts.spread;
-        var width = opts.width;
-        var height = opts.height;
-        var radius = opts.radius;
-        var center = {x:width/2,y:height/2};
-      
-        var sin = Math.sin;
-        var cos = Math.cos;
-        var PI = Math.PI;
-      
-        var radsPerSegment = Math.PI * 2 / data.length;
-      
-        var segment = d3.scale.ordinal().range(["#AB00D9","#FFF600","#009EEF"]).domain(d3.range(0,data.length - 1));
-      
-        var g = d3.select("#venn")
-                  .append("svg")
-                  .attr("width",width)
-                  .attr("height",height)
-                  .append("g");
-      
-        var venn = g.selectAll("circle")
-                    .data(data);
-      
-        var segmentAngle = function(i) {
-          var verticalZero = 0.5 * Math.PI;
-          return (i * radsPerSegment) - verticalZero;
-        };
-      
-        var enter = venn.enter()
-          .append("g")
-          .attr("transform",function(d,i) {
-            var centerRadius = radius - spread;
-            var x = cos(segmentAngle(i)) * centerRadius + center.x;
-            var y = sin(segmentAngle(i)) * centerRadius + center.y;
-            return translate(x,y);
-          });
-      
-        enter.append("svg:circle")
-          .style("fill",function(d,i) {
-            return segment(i)
-          })
-          .attr("opacity",0.6)
-          .attr("r",radius)
-          .on("mouseover",function() {
-            d3.select(this).transition().attr("r",radius + 5);
-          })
-          .on("mouseout",function() {
-            d3.select(this).transition().attr("r",radius);
-          })
-          ;
-      
-        enter.append("svg:text")
-          .text(plucker("name"))
-          .attr("transform",function(d,i) {
-            return translate(-this.offsetWidth/2,this.offsetHeight/2);
-          });
-        ;
-      
-        enter
-          .selectAll("text.children")
-          .data(plucker("children"))
-          .enter()
-          .append("g")
-            .attr("transform",function(d,i) {
-              var pindex = data.indexOf(d.parent);
-              var start = segmentAngle(pindex) - radsPerSegment / 2;
-              var end = segmentAngle(pindex) + radsPerSegment / 2;
-              var anglePerCategory = (end - start) / d.parent.children.length;
-              var angle = i * anglePerCategory + (anglePerCategory / 2) + start;
-              var textRadius = radius + 10;
-              d.angleRadians = angle;
-              return translate(cos(angle) * textRadius,sin(angle) * textRadius) + " rotate(" + angle * 57.2957795 + ")";
-            })
-            .append("text")
-            .text(plucker("name"))
-            .attr("transform",function(d) {
-              var piRads = d.angleRadians / PI;
-              if((piRads < -0.5 && piRads >= -1) || (piRads >= 0.5 && piRads < 1.5)) {
-                return "matrix(-1,0,0,-1," + this.clientWidth + ",0)";
-              } 
-              return "";
-            });
-      
-      
-      };
-      
-      venn({
-        data: data,
-        spread: 15,
-        width: 800,
-        height: 800,
-        radius: 120,
-      });
-      
-      }));
-    //]]>
+
+<section data-markdown ><script type="text/template">
+## Chain
+
+- based on existing selection, just like jQuery
+</script></section>
+
+<section>
+
+  <h3>Chain</h3>
+  <script type=code-example-alongside>
+    <h3 class=chain>
+      <p>Me</p>
+    </h3>
+    <p>Not me</p>
+  </script>
+  <div class=little-console></div>
+
+  <script type=cheat>
+    d3.selectAll(".chain").selectAll("p").text("hi");
+  </script>
+
+</section>
+
+<section data-markdown data-state=title><script type="text/template">
+## Once you have elements you can...
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Manipulate elements
+
+- `style()` - sets style properties
+- `attr()` - set attributes
+- `text()` or `html()` - set content
+
+</script></section>
+
+<section>
+
+  <h3>Manipulate</h3>
+  <script type=code-example-alongside>
+    <h3 class=manip>
+      I'm bored of this colour
+    </h3>
+  </script>
+  <div class=little-console></div>
+
+  <script type=cheat>
+    d3.selectAll(".manip").style({color: "red"});
+  </script>
+
+</section>
+
+
+<section data-markdown><script type="text/template">
+
+## Creating
+
+- `append(elName)`
+- `insert(elName, beforeSelector)`
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Context
+
+We need to be aware of which elements we're talking about
+
+<pre>
+    <code>
+        // results in &lt;h2&gt;&lt;a&gt;&lt;span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+        d3.select("body")
+          .append("h2") // now we're in context of h2
+          .append("a") // so a ends up inside h2
+          .append("span"); // and span inside a
+
+        // results in &lt;h2&gt;&lt;a&gt;&lt;/a&gt;&lt;span&gt;&lt;/span&gt;&lt;/h2&gt;
+        var h2 = d3.select("body")
+          .append("h2");
+        h2.append("a");
+        h2.append("span");
+    </code>
+</pre>
+
+</script></section>
+
+<section>
+
+  <h3>Append</h3>
+  <script type=code-example-alongside>
+    <ul class=append>
+      <li>I'm lonely</li>
+    </ul>
+  </script>
+  <div class=little-console></div>
+
+  <script type=cheat>
+    d3.selectAll(".append").append("li").text("I'll be your friend");
+  </script>
+
+</section>
+
+
+<section data-markdown data-state=title><script type="text/template">
+
+## Your turn!
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## What are we going to play with?
+
+- `select(css)` and `selectAll(css)`
+- `attr(Object)`, `style(Object)`
+- `text()`
+- `append(el)`
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Exercise
+
+- `exercises/selections`
+
+</script></section>
+
+
+<section data-markdown data-state=title><script type="text/template">
+## D3 is all about data
+</script></section>
+
+<section data-markdown><script type="text/template">
+## One callback API explains D3
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Where jQuery is all about the DOM...
+</script></section>
+
+<section data-markdown><script type="text/template">
+## jQuery's callback
+
+```javascript
+// static value, same for all
+$(".bars")
+.css("background","red");
+```
+```javascript
+// callback to vary value for each
+$(".bars")
+.css("background",function(index,current) {
+  var el = this;
+  return $(this).data('alert') ? "red" : "green";
+});
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+## D3 is all about data!
+</script></section>
+
+<section data-markdown><script type="text/template">
+## D3's callback
+
+```javascript
+d3.selectAll(".bars")
+.style("background",function(dataForElement,indexOfData) {
+  return dataForElement.alert ? "red" : "green";
+});
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+## `(data,...) {`
+
+- the data for an element
+</script></section>
+
+<section data-markdown><script type="text/template">
+## `(...,index) {`
+
+- where that data sits within the current data-set (order)
+</script></section>
+
+<section data-markdown><script type="text/template">
+## `return ...`
+
+- the function calculates the desired representation given `data` and `index`
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+## The bridge, el -> data
+```javascript
+function title(data,index) {
+  // calculate representation values from data
+  return (index + 1) + ". " + data.title;
+}
+```
+```javascript
+d3.select("#root")
+  .selectAll("h3")
+  .text(title);
+```
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+## ...and where does the data come from?
+</script></section>
+
+<section data-markdown><script type="text/template">
+## `data()`
+
+```javascript
+// make a selection, then call data()
+d3.selectAll("h3")
+  .data([
+    {title: "FOWA"},
+    {title: "London"}
+  ])
+  // now data can be related one-to-one with elements
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Data
+
+<ul class=data-eg>
+<li style='color: red'>select elements
+<li style='color: green'>join data
+<li style='color: blue'>manipulate
+</ul>
+
+```javascript
+d3.selectAll("data-eg")
+  .data([
+    { color: "red" },
+    { color: "green" },
+    { color: "blue" },
+  ])
+  .style(function(data) {
+    return data.color;
+  });
+
+```
+
+</script></section>
+
+<section>
+
+  <h3>Driving the document with data</h3>
+  <script type=code-example-alongside>
+    <h3 class=drive-me></h3>
+    <h3 class=drive-me></h3>
+  </script>
+  <div class=little-console></div>
+
+  <script type=cheat>
+    d3.selectAll(".drive-me").data([{title:"hi"},{title:"jquery"}]).text(function(d) { return d.title })
+  </script>
+
+</section>
+
+<section data-markdown><script type="text/template">
+
+## Your turn!
+
+- `exercises/my-first-data-viz`
+
+
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+## Driving the document via data
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Lifecycle of a visualisation
+
+- load Javascript
+- load data
+- visualise it
+- update when data changes
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Goal: synchronise data and representation
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+## D3's API has a metaphor for visualisations...
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+## Visualisation as theatre
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Data can...
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Enter the stage
+- AJAX response, data ready to display
+- new price tick 
+- player appears on high-scores
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Act (update)
+- price increases
+- Reddit story voted down
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Exit the stage
+- player falls off high-score table
+- data filtered
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Three stage directions
+
+- control whole visualisation
+- we specify manipulations for entering, updating, exiting elements
+
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+## Elements + data = context
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+## If we have new data, we need new representations
+</script></section>
+
+<section>
+  <h3>Enter</h3>
+  <script type=code-example-alongside>
+    <p>Empty and boring</p>
+    <div id=add-target></div>
+  </script>
+  <div class=little-console></div>
+  <script type=cheat>
+    d3.select("#add-target").selectAll("p").data([{name:"FOWA"},{name:"London"}]).enter().append("p").text(function(x) { return x.name });
   </script>
 </section>
+
+<section data-markdown><script type="text/template">
+## `enter()`
+
+- all the items of data that don't have a corresponding element
+- `enter()` normally followed by `append()`
+</script></section>
+
+<section data-markdown><script type="text/template">
+## If our data changes, we must change its representation
+</script></section>
+
 <section>
-  <h2>On the menu for today</h2>
-  <ul id='menu'>
-    <li>d3: what & why</li>
-    <li>Selecting elements</li>
-    <li>Binding data</li>
-    <li>Scales</li>
-    <li>Layouts</li>
-    <li>Questions</li>
-    <li>Creating your visualisations</li>
-  </ul>
-  <script type='text/javascript'>
-    //<![CDATA[
-      var data = [0.1,0.1,0.1,0.1,0.1,0.2,0.5];
-      
-      var colors = d3.scale.linear().domain([0,data.length - 1]).range(["#69C7FF","#ff0000"])
-      var width  = d3.scale.linear().domain([0,0.5]).range(["0%","100%"]);
-      
-      d3.select("#menu").selectAll("li").data(data)
-        .append("div")
-        .style("width",function(d) { return width(d) })
-        .style("height","16")
-        .style("background",function(d,i) { return colors(i) });
-    //]]>
-  </script>
-</section>
-<section class='subtitle'>
-  <h2>d3: what &amp; why of d3</h2>
-</section>
-<section>
-  <h2>What - comparison</h2>
-  <div id='demo1'>
-    <div class='controls'>
-      <h2>Best at</h2>
-      <div class='radios'></div>
+  <h3>Update</h3>
+  <script type=code-example-alongside>
+    <div id=update>
+      <p>Static content</p>
+      <p>Me too</p>
     </div>
-    <div class='graphs'></div>
+  </script>
+  <div class=little-console></div>
+  <script type=cheat>
+    d3.selectAll("#update p").data([{name:"FOWA"},{name:"London"}]).text(function(x) { return x.name });
+  </script>
+</section>
+
+<section data-markdown><script type="text/template">
+## Update
+
+- implicit - return value of `data()`
+- we have an existing element ready for the data
+
+```javascript
+var update = d3.selectAll("p")
+  .data(someData);
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+## If we filter out data, we must remove its representation
+</script></section>
+
+<section>
+  <h3>Exit</h3>
+  <script type=code-example-alongside>
+    <div id=exit>
+      <p>I'm safe</p>
+      <p>I'm worried</p>
+    </div>
+  </script>
+  <div class=little-console></div>
+  <script type=cheat>
+    d3.selectAll("#exit p").data([{a:"b"}]).exit().remove()
+  </script>
+</section>
+
+<section data-markdown><script type="text/template">
+## `exit()`
+
+- where we have more elements than data
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Contexts synchronise data and repesentation
+</script></section>
+
+<section>
+
+  <div class=contexts-explained>
+
+    <div class=situation>
+      <h2>Selection</h2>
+      <h3>Elements</h3>
+      <div class='elements track'></div>
+      <button class=addEl>Add element</button>
+      <button class=delEl>Remove element</button>
+      <h3 class=code>.data()</h3>
+      <div class='data track'></div>
+      <button class=addData>Add data</button>
+      <button class=delData>Remove data</button>
+    </div>
+
+    <div class=contexts>
+      <h2>d3 Contexts</h2>
+      <div>
+        <h3 class=code>enter()</h3>
+        <div class='enter track'></div>
+      </div>
+      <div>
+        <h3>Update</h3>
+        <div class='update track'></div>
+      </div>
+      <div>
+        <h3 class=code>exit()</h3>
+        <div class='exit track'></div>
+      </div>
+    </div>
+
   </div>
-  <script type='text/javascript'>
-    //<![CDATA[
-      var data = [
-        {"name":"jquery", data: [["dom",1], ["svg",0], ["data",0], ["open",0.7 ]]},
-        {"name":"d3", data: [ ["dom",0.6], ["svg",1], ["data",1], ["open",1 ]]},
-        {"name":"highcharts", data:[ ["dom",0], ["svg",0.1], ["data",0.6], ["open",0 ]]},
-        {"name":"raphael", data: [["dom",0], ["svg",1], ["data",0], ["open",0.5 ]]},
-        {"name":"processing", data:[ ["dom",0], ["svg",0], ["data",0.5], ["open",0.2 ]]}
-      ];
-      
-      var titles = {
-        open: "Uses existing APIs",
-        dom: "DOM tools",
-        svg: "SVG tools",
-        data: "Facilities for working with data"
-      };
-      
-      var reorder;
-      // selection behaviour
-      var cats = data[0].data.map(function(d,i) { return { name: d[0], selected: i === 0 } });
-      
-      var radios = d3.select("#demo1 .radios").selectAll("radio").data(cats).enter()
-        .append("label");
-      
-        radios.append("input").attr("name","sort").attr("value",pluck("name")).attr("type","radio").on("change",function(data) {
-          _.each(cats,function(c) { c.selected = false });
-          data.selected = true;
-          reorder();
-        });
-        document.querySelector("#demo1 input[value=dom]").checked = true;
-        radios.append("span").text(function(d) { return titles[d.name] });
-        
-      
-      _.each(data,function(d) {
-        d.dict = _.reduce(d.data,function(h,kv) {
-          h[kv[0]] = kv[1];
-          return h;
-        },{});
-      });
-      
-      var getSelected = function() { for(var c in cats) if(cats[c].selected) return cats[c] };
-      
-      reorder = function() {
-        var selected = getSelected().name;
-        data = _.sortBy(data,function(d) {
-          return -d.dict[selected];
-        });
-        render();
-      };
-      
-      var render = function() {
-      
-        var sections = d3.select("#demo1 .graphs").selectAll("div");
-      
-        var bound = sections.data(data,pluck("name"));
-      
-        // update
-        bound.style("top",function(d,i) {
-          return i * 128 + "px";
-        });
-      
-        var enter = bound.enter()
-                      .append("div")
-                      .style("top",function(d,i) {
-                        return i * 128 + "px";
-                      })
-                      .classed("data-framework",true)
-                      ;
-      
-        enter.append("h2")
-            .text(pluck("name"))
-      
-            ;
-      
-        var colors = d3.scale.category10();
-        var height = d3.scale.linear().domain([0,1]).range([1,600]);
-      
-        var divs = enter.append("div")
-          .classed("graph",true)
-          .selectAll("div")
-          .data(pluck("data"));
-              
-        divs.enter().append("div")
-          .text(pluck(0))
-          .attr("class",pluck(0))
-          .style("background",function(d,i) { return colors(i) })
-          .style("width",_.compose(height,pluck(1)));
-      
-      
-      };
-      
-      reorder();
-    //]]>
+
+</section>
+
+<section data-markdown><script type="text/template">
+## Shape of D3
+
+```javascript
+function viz(rootEl,data) {
+  var update = d3
+    .select(rootEl)
+    .selectAll(sel)
+    .data(data);
+
+  var enter = update.enter()
+    .append("circle");
+
+  var exit = update.exit()
+    .remove();
+}
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Sneaky
+
+- things entering are added to update context
+
+```javascript
+function viz(rootEl,data) {
+  var update = d3
+    .select(rootEl)
+    .selectAll(sel)
+    .data(data);
+
+  var enter = update.enter()
+    .append("circle");
+
+  // update + enter
+  var updateEnter = update;
+
+  update.attr("r", setRadius);
+
+}
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Your turn!
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Exercise
+
+- `exercise/contexts`
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+## DOM events
+</script></section>
+
+<section>
+
+  <h3>Interaction</h3>
+  <script type=code-example-alongside>
+    <button id=clicky>
+      I'm so good to click
+    </button>
   </script>
-  <style>
-    #demo1 {
-      position: relative;
-      font-size: 0.25em;
-      overflow: auto; }
-      #demo1 .data-framework {
-        -webkit-transition: all 0.5s;
-        position: absolute; }
-      #demo1 h2 {
-        text-align: left;
-        margin: 0 0 0.5em 0; }
-      #demo1 .graphs {
-        margin-left: 2em;
-        width: 40%;
-        height: 100%; }
-      #demo1 .graph {
-        float: left;
-        margin-bottom: 1em; }
-      #demo1 .data-framework {
-        overflow: auto; }
-      #demo1 .controls {
-        float: left;
-        width: 38%;
-        margin-left: 10%; }
-        #demo1 .controls h2 {
-          font-size: 3em; }
-      #demo1 .graphs {
-        float: left;
-        width: 48%; }
-      #demo1 label {
-        display: block;
-        font-size: 2em;
-        line-height: 2em;
-        cursor: pointer; }
-      #demo1 input {
-        margin-right: 2em; }
-  </style>
-</section>
-<section>
-  <h2>Philosophy</h2>
-  <p>Don't invent a propritatory API - use SVG, HTML. You'll see 'g' elements just like in SVG, not new names for old things (eg jQuery - `dataType` not `responseType`).</p>
-  <p>Toolkit for visualisations, not lots of prebaked ones.</p>
-  <p>Definitely not a charting library.</p>
-</section>
-<section>
-  <h2>Why</h2>
-  <p>Not propriatory - you can use what you learn about SVG, HTML and CSS everywhere.</p>
-  <p>Mobile friendly (HTML everywhere, SVG iOS, Android Browser 3.0+).</p>
-  <p>Less to learn - not a big scary black box.</p>
-</section>
-<section class='subtitle'>
-  <h2>Selecting elements</h2>
-</section>
-<section>
-  <h2>API</h2>
-  <pre>d3.select("body")&#x000A;  .append("h2")&#x000A;  .text("foo")&#x000A;  .transition()&#x000A;    .style("color","red");&#x000A;&#x000A;d3.select("p")&#x000A;  .style("font-size","2em")&#x000A;  .append("span")&#x000A;    .text("I'm a span in a paragraph");&#x000A;</pre>
-</section>
-<section>
-  <h2>Chaining</h2>
-  <p>Just like jQuery, we can keep calling methods on the same elements.</p>
-  <p>If we create new elements via append, the context of our chain becomes the new elements.</p>
-  <p>Use `transition` to apply changes over time.</p>
-</section>
-<section>
-  <h2>Context</h2>
-  <p>We need to be aware of which elements we're talking about</p>
-  <pre>// results in &lt;h2&gt;&lt;a&gt;&lt;span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&#x000A;d3.select("body")&#x000A;  .append("h2") // now we're in context of h2&#x000A;  .append("a") // so a ends up inside h2&#x000A;  .append("span"); // and span inside a&#x000A;&#x000A;// results in &lt;h2&gt;&lt;a&gt;&lt;/a&gt;&lt;span&gt;&lt;/span&gt;&lt;/h2&gt;&#x000A;var h2 = d3.select("body")&#x000A;  .append("h2");&#x000A;h2.append("a");&#x000A;h2.append("span");&#x000A;&#x000A;&#x000A;</pre>
-</section>
-<section>
-  <h2>Events</h2>
-  <pre>d3.selectAll("input")&#x000A;  .on("change",function(data,index) {&#x000A;    // event handler&#x000A;  });&#x000A;</pre>
-  <p>Again, very similar to jQuery, `this` being DOM element.</p>
-  <p>`d3.event` holds current event</p>
-  <p>`this` for target DOM node</p>
-</section>
-<section class='subtitle'>
-  <h2>Code: selecting elements</h2>
-</section>
-<section class='subtitle'>
-  <h2>What are `data` and `index` doing where `event` is normally...?</h2>
-</section>
-<section class='subtitle'>
-  <h2>We need to talk about data</h2>
-</section>
-<section id='data-demo'>
-  <h2>Data</h2>
-  <ul></ul>
-  <script type='text/javascript'>
-    //<![CDATA[
-      onPage("data-demo",function() {
-        var sections = d3.select("#data-demo ul")
-          .selectAll("li")
-          .data([
-            "d3 gets data in front of users by binding it to elements.",
-            "You can then use it to dynamically setup attributes *",
-            "It'll be passed to your event handers"
-          ])
-          .enter()
-            .append("li")
-            .style("opacity",0)
-            .text(function(d) { return d }) // * dynamic
-            .transition()
-            .delay(function(d,i) { return i * 1000 })
-            .style("opacity",1)
-      });
-    //]]>
+  <div class=little-console></div>
+
+  <script type=cheat>
+    d3.select("#clicky").on("click",function() { alert("YAY!") });
   </script>
-  <script type='text/javascript'>
-    //<![CDATA[
-      onPage("data-demo",function() {
-        setTimeout(function() {
-          revealCode("data-demo") 
-        },3500);
-      });
-    //]]>
-  </script>
+
 </section>
-<section>
-  <h2>Joins</h2>
-  <p>In the code for the comparison, before we have any data we select all divs.</p>
-  <p>Why are we binding to elements that don't exist?</p>
-  <pre>var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div")&#x000A;</pre>
-  <p>Why isn't this a waste of time?</p>
-</section>
-<section id='change'>
-  <h2>Reflecting change</h2>
-  <p>Three types - new data, change in values, data leaving</p>
-  <div id='change-demo'></div>
-  <button id='change-btn'>
-    Change
-  </button>
-  <script type='text/javascript'>
-    //<![CDATA[
-      onPage("change",function() {
-      var draw = function() {
-        var root = d3.select("#change-demo")
-      
-        var colors = d3.scale.linear().domain([-2,2]).range(["#FF0000","#0000FF"]);
-      
-        var s = root.selectAll("div").data(d3.range(Math.round(Math.random()  * 10)).map(d3.random.normal()));
-      
-        // update method
-        s.transition()
-          .style("color",function(d)  { return colors(d) })
-          .text(I);
-      
-        // data without elements
-        s.enter()
-            .append("div")
-            .style({opacity: 0})
-            .text(I)
-            .transition()
-              .delay(function(d,i) { return i * 250 })
-              .style("color",function(d)  { return colors(d) })
-              .style({opacity: 1})
-      
-        // elements without data
-        s.exit()
-            .transition()
-            .delay(function(d,i) { return i * 250 })
-            .style({opacity: 0})
-            .remove();
-      }
-      d3.select("#change-btn").on("click",draw);
-        draw();
-      });
-    //]]>
-  </script>
-  <script type='text/javascript'>
-    //<![CDATA[
-      onPage("change",function() {
-        setTimeout(function() {
-          revealCode("change") 
-        },2500);
-      });
-    //]]>
-  </script>
-</section>
-<section>
-  <h2>Update</h2>
-  <p>You're setting rules for updates as soon as you bind data</p>
-  <p>Updates apply when you have both an element and a datum</p>
-  <p>Rerun the selection when adding data, attributes will be updated</p>
-  <p>Use transitions to move smoothly to the new values</p>
-  <pre>var update = d3.selectAll("div") // 1 div&#x000A;  .data([1,2,3,4])&#x000A;  // will act on the first div, passing 1&#x000A;  .text(function(d) { &#x000A;    return "I'm updating " + 1 // I'm updating 1&#x000A;   }) &#x000A;</pre>
-</section>
-<section>
-  <h2>Enter</h2>
-  <p>New data that doesn't fit into the current selection goes into enter</p>
-  <p>eg:</p>
-  <pre>var update = d3.selectAll("div") // 1 div&#x000A;  .data([1,2,3,4])&#x000A;&#x000A;var enter = update.enter() // will act on [2,3,4], appending 3 divs&#x000A;  .append("div") &#x000A;</pre>
-</section>
-<section>
-  <h2>Exit</h2>
-  <p>Elements that no longer have a datum will go into exit</p>
-  <p>eg:</p>
-  <pre>var update = d3.selectAll("div") // 5 divs&#x000A;  .data([1])&#x000A;&#x000A;var exit = update.exit() // will affect the other 4 divs, removing them&#x000A;  .remove()&#x000A;</pre>
-</section>
-<section>
-  <h2>Join demo</h2>
-  <div id='join-demo'>
-    <div class=els>
-    <h2>Situation</h2>
-    <h3>Elements</h3>
-    <button class=addEl>Add element</button>
-    <button class=removeEl>Remove element</button>
-    <div class=strip id=elements></div>
-    <h3>Data</h3>
-    <button class=addData>Add data</button>
-    <button class=removeData>Remove element</button>
-    <div class=strip id=data></div>
-    </div>
-    <div id=contexts>
-    <h2>Contexts</h2>
-    <div class=context>
-    <h3>Update</h3>
-    <code>update context (returned by .data())</code>
-    <div class=strip id=update></div>
-    </div>
-    <div class=context>
-    <h3>Enter</h3>
-    <code>.enter()</code>
-    <div class=strip id=enter></div>
-    </div>
-    <div class=context>
-    <h3>Exit</h3>
-    <code>.exit()</code>
-    <div class=strip id=exit></div>
-    </div>
-    </div>
-    <script src=join-viz.js></script>
-  </div>
-</section>
-<section class='subtitle'>
-  <h1>Code: our first data-viz</h1>
-</section>
-<section>
-  <h2>Key functions</h2>
-  <p>If we change data, we need a way for d3 (and us) to know it's actually referring to the same thing.</p>
-  <p>Initially datums are identified by position in array - if we change order this breaks.</p>
-  <p>Key fn tells d3 which of the values is a unique key.</p>
-</section>
-<section>
-  <h2>Creating a key function</h2>
-  <pre>var data = [&#x000A;  {"name":"jquery", data: [["dom",1], ["svg",0], ["data",0], ["open",0.7 ]]},&#x000A;  {"name":"d3", data: [ ["dom",0.8], ["svg",1], ["data",1], ["open",1 ]]},&#x000A;  {"name":"highcharts", data:[ ["dom",0], ["svg",1], ["data",1], ["open",0 ]]},&#x000A;  {"name":"raphael", data: [["dom",0], ["svg",1], ["data",0], ["open",0.5 ]]},&#x000A;  {"name":"processing", data:[ ["dom",0], ["svg",0], ["data",0.5], ["open",0.2 ]]}&#x000A;];&#x000A;&#x000A;var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div").data(data,function(datum) {&#x000A;    return datum.name;&#x000A;  });&#x000A;</pre>
-</section>
-<section>
-  <h2>Hierarchy</h2>
-  <p>We can reflect a hierarchical set of data in elements</p>
-  <pre>var sections = d3.select("#demo1")&#x000A;  .append("div")&#x000A;  .classed("graphs",true)&#x000A;  .selectAll("div").data(data,pluck("name"))&#x000A;&#x000A;sections.enter()&#x000A;    .append("div")&#x000A;    .classed("data-framework",true)&#x000A;    .append("h2")&#x000A;    .text(pluck("name"))&#x000A;    ;&#x000A;</pre>
-  <p>In our framework comparison we had a set of frameworks each with 4 attributes.</p>
-  <p>So we need a set of 5 elements each containing 4 elements.</p>
-</section>
-<section>
-  <h2>Loading data</h2>
-  <p>Don't need to include jQuery - has facilities to load CSV, JSON etc</p>
-  <pre>d3.csv(url,function(csv) {&#x000A;  // remember to parse your data - csv is stringly typed&#x000A;});&#x000A;&#x000A;d3.json(url,function(tastyData) {&#x000A;&#x000A;});&#x000A;</pre>
-</section>
-<section>
-  <h2>Munging data</h2>
-  <p>d3 includes the JS 1.6 array methods - `filter`, `map`, `reduce` etc</p>
-  <p>Similar functionality to underscore.js - `nest` for `_.groupBy` etc</p>
-</section>
-<section>
-  <h2>Mins and maxes</h2>
-  <p><code>d3.extent()</code>, <code>d3.min()</code>, <code>d3.max()</code></p>
-  <pre>var data = [{value: 45},{value: 10},{value: 50}];&#x000A;d3.extent(data,function(datum) {&#x000A;  return datum.value&#x000A;});&#x000A;// [10,50]&#x000A;&#x000A;</pre>
-</section>
-<section class='subtitle'>
-  <h2>Code: sorting &amp; transitions</h2>
-</section>
-<section class='subtitle'>
-  <h2>Scales</h2>
-</section>
-<section>
-  <h2>Functional scales</h2>
-  <p>d3 can create our scales, so we don't need to.</p>
-  <pre>var mapping = d3.scale.linear()&#x000A;  .domain([SMALLEST_INPUT,LARGEST_INPUT])&#x000A;  .range([SMALLEST_OUTPUT,LARGEST_OUTPUT]);&#x000A;</pre>
-  <p>Has built in colour scales that look lovely</p>
-</section>
-<section>
-  <h2>Ranges and domains</h2>
-  <p>Domain is the range of values something has</p>
-  <p>Range is a visual representation of that domain</p>
-  <p>We map between them</p>
-</section>
-<section>
-  <h2>Domain: input, range: output</h2>
-  <div style='text-align: center'>
-    <img src='img/scales.png' />
-  </div>
-</section>
-<section>
-  <h2>First page menu</h2>
-  <p>Simple colour scale with steps.</p>
-  <pre>var data = [0.05,0.1,0.1,0.1,0.1,0.1,0.45];&#x000A;&#x000A;// create scale&#x000A;var colors = d3.scale.linear().domain([0,data.length - 1])&#x000A;// clever inteporlation!&#x000A;  .range(["#69C7FF","#3593E6"])&#x000A;// further config&#x000A;  .clamp()&#x000A;&#x000A;d3.select("#menu").selectAll("li").data(data)&#x000A;  .append("div")&#x000A;  .style("background",function(d,i) { return colors(i) });&#x000A;</pre>
-</section>
-<section class='subtitle'>
-  <h2>Layouts</h2>
-</section>
-<section>
-  <h2>Layouts</h2>
-  <p>Pure data: they don't do the laying out for you</p>
-  <p>Most generic part of a layout is the algorithm to decide relative sizes/positions, that's what d3 gives you.</p>
-  <p>Bound to the data, accessed as if you had a `dx` and `dy` in your data.</p>
-</section>
-<section id='layout-demo'>
-  <h2>Histogram</h2>
-  <div id='histogram-1'></div>
-  <script type='text/javascript'>
-    //<![CDATA[
-      onPage("layout-demo",_.once(function() {
-      
-        var randomData = d3.range(1000).map(d3.random.irwinHall(10));
-      
-        var width = 800;
-        var height = 500;
-      
-        var x = d3.scale.linear()
-            .domain([0, 1])
-            .range([0, width]);
-      
-        var data = d3.layout.histogram()
-            .bins(x.ticks(20))
-            (randomData);
-      
-        var y = d3.scale.linear()
-            .domain([0, d3.max(data, function(d) { return d.y; })])
-            .range([height, 0]);
-      
-        var svg = d3.select("#histogram-1").append("svg")
-            .attr("width", width)
-            .attr("height", height);
-      
-        svg.selectAll("rect")
-            .data(data)
-          .enter()
+
+
+<section data-markdown><script type="text/template">
+## Events
+
+- _still_ `data`, `index` in callbacks
+- `d3.event` current event
+
+```javascript
+on('click', function(data, index) {
+  // standard DOM event
+  var target = d3.event.target;
+});
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Helpers
+
+```javascript
+someSelection
+.on("mouseover", function() {
+  // gives us x,y rel to current el
+  var xy = d3.mouse(this);
+});
+
+someSelection
+.on("touchstart", function() {
+  // same for touch events
+  var touchXys = d3.touches(this);
+});
+```
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Your turn!
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Exercise
+
+- `exercise/events`
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+## Animating
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Two types
+</script></section>
+
+<section data-markdown><script type="text/template">
+## 1. CSS
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Transitions
+```css
+.user {
+  transition: all 0.25s;
+  background: white;
+}
+.user.selected {
+  background: yellow;
+}
+```
+
+```javascript
+// css transition kicks in
+user.classed("selected", true);
+```
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+## 2. `d3.transition`
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Transitioning with d3
+
+- smart (can transition `px`, colors)
+- simple API
+
+```javascript
+selection
+  .transition()
+  // all modifications to css or attrs
+  // now smooth
+  .style({ color: "red" })
+```
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+## CSS
+- CSS for anything static
+- dynamic = d3
+- combine CSS with dynamic elements from D3
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+## Consistency of representation
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Animating data must be informative
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Thus data must stick to same element
+
+- or it'll jump: confusing
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Need to have consistent way to link element to datum
+</script></section>
+
+<section data-markdown ><script type="text/template">
+## Datums -> elements via key function
+</script></section>
+
+<section data-markdown ><script type="text/template">
+## `ƒ(d,i) { return d.id }` 
+
+- by default, just `{ return index }`
+</script></section>
+
+<section data-markdown ><script type="text/template">
+## Just return the id
+
+- what's unique per datum?
+
+```javascript
+     d3.selectAll(".user")
+       .data(data,function(datum) {
+         return datum.name;
+       });
+```
+</script></section>
+
+<section data-markdown ><script type="text/template">
+## Simple animated sort
+
+```css
+.item {
+  transition: all 0.25s;
+  position: absolute;
+}
+```
+
+```javascript
+function visualise(users) {
+  var update = d3.select("#users")
+    .selectAll(".user")
+    .data(users, getName)
+    .style("top", function(_d, i) {
+      return i * 25 + "px";
+    });
+}
+```
+</script></section>
+
+<script src=visualisations/sorting.js></script>
+<style>
+.users { position: relative }
+.users li {
+  transition: all 0.25s;
+  position: absolute;
+}
+</style>
+
+<section data-markdown ><script type="text/template">
+## With key function
+
+<button id=sort-with-btn>
+  Sort
+</button>
+
+<ul class=users id=sort-with><li><li><li></ul>
+
+</script></section>
+
+<section data-markdown ><script type="text/template">
+## Without key function
+
+<button id=sort-without-btn>
+  Sort
+</button>
+
+<ul class=users id=sort-without><li><li><li></ul>
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Exercise
+
+- `exercises/animating-elements-el-consistency`
+
+</script></section>
+
+
+<section data-markdown data-state=title><script type="text/template">
+## Pure data
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Visualisation is impossible without good data
+</script></section>
+
+<section data-markdown><script type="text/template">
+## 1. You need to get it 
+</script></section>
+
+<section data-markdown><script type="text/template">
+## 2. You need to prepare it
+</script></section>
+
+<section data-markdown><script type="text/template">
+## 3. You need to update it
+</script></section>
+
+<section data-markdown><script type="text/template">
+## 1. Getting data
+- d3 has facilities to load CSV, JSON etc
+- `d3.xhr` for low-level AJAX
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+```javascript
+d3.json(url,function(err, tastyData) {
+  if(err) {
+    alert("oh no!");
+  } else {
+    // we have tasty data!
+  }
+});
+
+d3.csv(url, function(row) {
+  // called for each row
+  return { 
+    createdAt: new Date(Date.parse(row.date)) 
+  };
+}, function(err, csv) {
+  // csv = parsed CSV rows
+});
+```
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## 2. Preparing data
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Data prep
+
+- 80% of jobs, d3 will have a method
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Extent of data
+
+
+```javascript
+var data = [{value: 45},{value: 10},{value: 50}];
+
+d3.extent(data, value); // [10, 50]
+d3.min(data, value); // 10
+
+function value(datum) {
+  return datum.value
+}
+```
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Sorting
+
+
+```javascript
+var data = [3, 1, 4, 5, 2];
+
+data.sort(d3.ascending);
+```
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Basic stats
+
+
+```javascript
+var data = [1, 2, 3, 4, 5];
+
+d3.mean(data, value); // 3
+d3.sum(data, value); // 15
+d3.quantile(data, 0.1); // 1.4
+```
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Transforming
+
+- JS ES5 gave us a lot
+- `map`, `reduce`, `filter`, `some`, `every`
+- basics: `sort`, `join`, `slice`
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## D3 transforms
+
+- `d3.shuffle`, `d3.permute`, `d3.zip`
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Nesting
+
+- like an SQL `GROUP BY`
+
+```javascript
+var logins = [
+  { cohort: 1, country: "uk" },
+  { cohort: 1, country: "fr" },
+  { cohort: 2, country: "uk" },
+];
+
+var byCohortAndCountry = d3.nest()
+  .key(function(d) { return d.cohort })
+  .key(function(d) { return d.country })
+  .entries(logins);
+
+/* [{
+      "key":"1","values":
+        [{
+          "key":"uk",
+          "values":[
+            {"cohort":1,"country":"uk"}
+          ... */
+```
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Overwhelmed?
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Only need to remember a rule of thumb
+</script></section>
+
+<section data-markdown><script type="text/template">
+## D3 has a method for that
+
+- read the docs before you write data-prep code
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Let's try!
+
+- JSBin
+
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+
+## Scales
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Mapping data to representation
+</script></section>
+
+<section data-markdown><script type="text/template">
+## By hand...
+```javascript
+var users = [{age: 45},{age: 21},{age: 50}];
+
+function radius(age) {
+  return Math.max(100, age * 1.5) + "px";
+}
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+## With D3
+```javascript
+var users = [{age: 45},{age: 21},{age: 50}];
+
+var radius = d3.scale.linear()
+  .domain(d3.extent(users, age))
+  .range([10, 100])
+  .clamp(true);
+
+radius(45) // 84.4...
+radius(1) // 10
+radius(1e6) // 100
+
+function age(user) {
+  return user.age;
+}
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Functional scales
+
+- let d3 can create your mappings
+
+```javascript
+var mapping = d3.scale.linear()
+  .domain([SMALLEST_INPUT,LARGEST_INPUT])
+  .range([SMALLEST_OUTPUT,LARGEST_OUTPUT]);
+```
+
+Has built in colour scales that look lovely
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Ranges and domains
+
+- domain: extent of values something has
+- range: values we wan to map the domain to
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Domain: input, range: output
+
+<div style="text-align: center;">
+    <img src="img/scales.png" />
+</div>
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## First page menu
+
+Simple colour scale with steps.
+
+<pre>
+    <code>
+        var data = [0.05,0.1,0.1,0.1,0.1,0.1,0.45];
+
+        // create scale
+        var colors = d3.scale.linear().domain([0,data.length - 1])
+        // clever inteporlation!
+          .range(["#69C7FF","#3593E6"])
+        // further config
+          .clamp()
+
+        d3.select("#menu").selectAll("li").data(data)
+          .append("div")
+          .style("background",function(d,i) { return colors(i) });
+    </code>
+</pre>
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Types of scale
+
+- large variance: `log()`, `pow()`
+- categorical, ordinal
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Colour scale
+
+- ordinal scales with colour ranges
+- ColorBrewer - CSS/JS with colour-theory selected colours
+
+```javascript
+d3.scale.category20b()
+```
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Let's try
+
+- JSBin
+
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+## Thinking with data
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Drive _with_ data
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Your data changes first, then representation changes
+</script></section>
+
+<section data-markdown><script type="text/template">
+## e.g sorting
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Layouts
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Layouts
+
+- pure data: they don't do rendering
+- makes it very reusable/hackable 
+- takes dataset, returns modified one
+
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Histogram
+
+<img src=img/histogram.png>
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Transforms data
+
+```javascript
+svg.selectAll("rect")
+    // layouts only affect our data
+    .data(histogram(data))
+    .enter()
+      .append("rect")
+      .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; })
+      .attr("width", x(data[0].dx) - 1)
+      .attr("height", function(d) { return height - y(d.y); });
+```
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+```javascript
+var drawHistogram = function(width, height) {
+    var randomData = d3.range(1000).map(d3.random.irwinHall(10));
+
+    var x = d3.scale.linear()
+        .domain([0, 1])
+        .range([0, width]);
+
+    var histogram = d3.layout.histogram()
+        .bins(x.ticks(20))
+
+    var y = d3.scale.linear()
+        .domain([0, d3.max(data, function(d) { return d.y; })])
+        .range([height, 0]);
+
+    var svg = d3.select("#histogram-1").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    svg.selectAll("rect")
+        .data(histogram(data))
+        .enter()
             .append("rect")
             .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; })
             .attr("width", x(data[0].dx) - 1)
             .attr("height", function(d) { return height - y(d.y); });
-      
-      }));
-    //]]>
-  </script>
-  <div class='demo-code'></div>
-  <script type='text/javascript'>
-    //<![CDATA[
-      onPage("layout-demo",_.once(function() {
-        revealCode("layout-demo",function(code,pre) {
-          d3.select("#layout-demo .demo-code")[0][0].appendChild(pre); 
-        }) 
-      }));
-    //]]>
-  </script>
-  <style>
-    #histogram-1 {
-      float: left;
-      width: 28%; }
-    
-    #layout-demo .demo-code {
-      float: left;
-      width: 70%; }
-    #layout-demo pre {
-      padding: 0;
-      margin: 0; }
-  </style>
-</section>
-<section class='subtitle'>
-  <h2 style='font-size:2em'>Tell me and I'll forget;<br/><br/> show me and I may remember;<br /><br/> involve me and I'll understand.</h2>
-</section>
-<section>
-  <h2>Hands on time</h2>
-  <p>We'll be building a real-time visualisation using reddit data</p>
-  <p>
-    Tweet your work in progress, ask me how to setup a github page to host it.
-  </p>
-</section>
-<script src='prettify.js'></script>
-<script src='main.js'></script>
+}
+```
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Dynamic layouts
+
+- fire events to inform you when to re-render
+
+```javascript
+force.on("tick", function() {
+  leaf.attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; });
+});
+```
+
+
+</script></section>
+
+<section data-markdown data-state=title><script type="text/template">
+
+## WOAH!!!
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Too much learning
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Time to see it all put into practise
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Then do it yourself...
+
+</script></section>
+
+</div>
+</div>
+
+
+<script src=d3.js></script>
+
+<!-- Code samples -->
+<script src=code-samples/reflecting-change-sample.js></script>
+<script src=code-samples/histogram-sample.js></script>
+
+<script src=slides-theme/js/little-console.js></script>
+<script src=slides-theme/js/enable-consoles.js></script>
+<script src=slides-theme/js/code-example.js></script>
+<script>
+  var revealCodeSamples = codeExamples.revealAlongside.bind(null,"script[type=code-example-alongside]");
+</script>
+
+
+<!-- Visualisations -->
+<script src=visualisations/venn.js></script>
+<script src=visualisations/comparison-bars.js></script>
+<script src=visualisations/presentation-visualisations.js></script>
+<script src=visualisations/reflecting-change.js></script>
+<script src=visualisations/histogram.js></script>
+<script src=visualisations/join-demo.js></script>
+
+<script src=visualisations/d3-contexts-explained.js></script>
+<script>explainContexts(document.querySelector(".contexts-explained"));</script>
+
+
+
+<script src="reveal/lib/js/head.min.js"></script>
+<script src="reveal/js/reveal.min.js"></script>
+<script>
+  Reveal.initialize({
+
+    width: "100%",
+
+    // Display controls in the bottom right corner
+    controls: false,
+
+    // Display a presentation progress bar
+    progress: true,
+
+    // Push each slide change to the browser history
+    history: true,
+
+    // Enable keyboard shortcuts for navigation
+    keyboard: true,
+
+    // Enable the slide overview mode
+    overview: true,
+
+    // Vertical centering of slides
+    center: false,
+
+    // Loop the presentation
+    loop: false,
+
+    // Change the presentation direction to be RTL
+    rtl: false,
+
+    // Number of milliseconds between automatically proceeding to the
+    // next slide, disabled when set to 0, this value can be overwritten
+    // by using a data-autoslide attribute on your slides
+    autoSlide: 0,
+
+    // Enable slide navigation via mouse wheel
+    mouseWheel: false,
+
+    // Apply a 3D roll to links on hover
+    rollingLinks: false,
+
+    // Transition style
+    transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+    dependencies: [
+        // Cross-browser shim that fully implements classList - https://github.com/eligrey/classList.js/
+        { src: 'reveal/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+
+        // Interreveal/pret Markdown in <section> elements
+         { src: 'reveal/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); }, 
+          callback: function() {
+            showConsoles();
+            revealCodeSamples();
+            // TODO - is there a proper event for 'rendered'?
+            setTimeout(function() {
+              setupExamples();
+              revealPluginMardownCallbacks.forEach(function(fn) {
+                fn();
+              });
+            }, 250);
+          }
+         },
+        { src: 'reveal/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+
+        // Syntareveal/x highlight for <code> elements
+        { src: 'reveal/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+
+        // Zoom reveal/in and out with Alt+click
+        { src: 'reveal/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+
+        // Speakreveal/er notes
+        { src: 'reveal/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+
+        // Remotreveal/e control your reveal.js presentation using a touch device
+        // { src: 'reveal/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+
+  });
+</script>
+</body>

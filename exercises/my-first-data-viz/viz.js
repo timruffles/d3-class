@@ -1,13 +1,13 @@
 var data = [
-  {text: "my"},
-  {text: "first"},
-  {text: "visualisation"}
+  {text: "my", value: 10},
+  {text: "first", value: 30},
+  {text: "visualisation", value: 20}
 ]
 
-var someDataUpdate = d3.select(x)
-  .selectAll(y)
-  .data(data)
 
-// updating
-// entering
-// exiting
+// TODO select els
+//
+// TODO bind
+//
+// TODO change font-size to match 'value'
+//

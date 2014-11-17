@@ -1,16 +1,77 @@
 <html>
 
 	<head>
-		<meta charset="utf-8">
+		<meta charset="utf-8"><link rel=stylesheet href=../vendor/foundation/css/foundation.css>
 	</head>
 	<body>
+
+    <div class=row>
+
+    <div class='alert-box success'>
+      <p>Make each element like the one below it it via D3's selection.
+
+      <p>Don't touch the HTML, use D3 in <code>viz.js</code> to do the DOM manipulation.
+
+      <p>You'll probably want to read the HTML to see exactly the structures you need to create.
+    </div>
+
+
+
+    <h2>One</h2>
+
+    <p class=one>I can't use D3</p>
+
+    <p style='color:red'>I can use D3</p>
+
+
+
 		
-		<ul id="update-only">
-			<li></li>
-			<li></li>
-			<li></li>
+    <h2>Two</h2>
+
+		<ul class=two>
+			<li>I don't know how to select all elements</li>
+			<li>So these mocking comments are safe</li>
+		</ul>
+
+		<ul>
+			<li>I was changed</li>
+			<li>I was changed</li>
+		</ul>
+
+
+
+    <h2>Three</h2>
+
+		<ul class=three>
+		</ul>
+
+		<ul>
+			<li>
+        Look, I'm nested
+        <ul>
+          <li>Only a real pro can make something like me!
+        </ul>
+      </li>
+		</ul>
+
+
+
+    <h2>Four</h2>
+
+		<ul class=four>
+		</ul>
+
+		<ul>
+			<li>
+        Creating sibling elements, with different content
+      </li>
+			<li>
+        Mark of the d3 pro
+      </li>
 		</ul>
 	
+    </div>
+
 		<script src="d3.js"></script>
 		<script src="viz.js"></script>
 	</body>
