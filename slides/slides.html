@@ -21,6 +21,17 @@
         float: left;
         width: 50%;
       }
+
+      #join-demo p {
+        display: inline-block;
+        background: #444444;
+        color: #444444;
+        border-radius: 2px;
+        margin: 2px;
+        width: 10px;
+        padding-left: 2.5%;
+        padding-right: 2.5%;
+      }
     </style>
 </head>
 
@@ -275,6 +286,51 @@ Three types - new data, change in values, data leaving
 </script></section>
 
 
+<section data-markdown><script type="text/template">
+
+## Join demo
+
+<div id="join-demo-viz" viz="joinDemo"></div>
+<div id="join-demo">
+  <div class="els">
+    <h2>Situation</h2>
+
+    <h3>Elements</h3>
+    <button class="addEl">Add element</button>
+    <button class="removeEl">Remove element</button>
+    <div class="strip" id="elements"></div>
+    <h3>Data</h3>
+    <button class="addData">Add data</button>
+    <button class="removeData">Remove element</button>
+    <div class="strip" id="data"></div>
+  </div>
+
+
+  <div id=contexts>
+    <h2>Contexts</h2>
+
+    <div class="context">
+      <h3>Update</h3>
+      <code>update context (returned by .data())</code>
+      <div class="strip" id="update"></div>
+    </div>
+    <div class="context">
+      <h3>Enter</h3>
+      <code>.enter()</code>
+      <div class="strip" id="enter"></div>
+    </div>
+    <div class="context">
+      <h3>Exit</h3>
+      <code>.exit()</code>
+      <div class="strip" id="exit"></div>
+    </div>
+  </div>
+</div>
+
+</script></section>
+
+
+
 <section data-markdown id="37"><script type="text/template">
 
 ## Reflecting change
@@ -288,53 +344,6 @@ Three types - new data, change in values, data leaving
 </div>
 
 </script></section>
-
-
-<!--section data-markdown id="21"><script type="text/template">
-
-## Join demo
-
-<div id="join-demo">
-  <div class=els>
-    <h2>Situation</h2>
-
-    <h3>Elements</h3>
-    <button class=addEl>Add element</button>
-    <button class=removeEl>Remove element</button>
-    <div class=strip id=elements></div>
-
-    <h3>Data</h3>
-    <button class=addData>Add data</button>
-    <button class=removeData>Remove element</button>
-    <div class=strip id=data></div>
-  </div>
-
-
-  <div id=contexts>
-    <h2>Contexts</h2>
-
-    <div class=context>
-      <h3>Update</h3>
-      <code>update context (returned by .data())</code>
-      <div class=strip id=update></div>
-    </div>
-
-    <div class=context>
-      <h3>Enter</h3>
-      <code>.enter()</code>
-      <div class=strip id=enter></div>
-    </div>
-
-    <div class=context>
-      <h3>Exit</h3>
-      <code>.exit()</code>
-      <div class=strip id=exit></div>
-    </div>
-  </div>
-</div>
-
-</script></section-->
-
 
 
 
@@ -355,6 +364,7 @@ Three types - new data, change in values, data leaving
 <script src=visualisations/presentation-visualisations.js></script>
 <script src=visualisations/reflecting-change.js></script>
 <script src=visualisations/histogram.js></script>
+<script src=visualisations/join-demo.js></script>
 
 <script src="reveal/lib/js/head.min.js"></script>
 <script src="reveal/js/reveal.min.js"></script>
@@ -427,4 +437,3 @@ Three types - new data, change in values, data leaving
   Reveal.addEventListener('slide-18', reflectingChange, false );
 </script>
 </body>
-
