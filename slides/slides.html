@@ -139,6 +139,55 @@ Use `transition` to apply changes over time.
 </script></section>
 
 
+<section data-markdown ><script type="text/template">
+
+## Context
+
+We need to be aware of which elements we're talking about
+
+<pre>
+    <code>
+        // results in &lt;h2&gt;&lt;a&gt;&lt;span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+        d3.select("body")
+          .append("h2") // now we're in context of h2
+          .append("a") // so a ends up inside h2
+          .append("span"); // and span inside a
+
+        // results in &lt;h2&gt;&lt;a&gt;&lt;/a&gt;&lt;span&gt;&lt;/span&gt;&lt;/h2&gt;
+        var h2 = d3.select("body")
+          .append("h2");
+        h2.append("a");
+        h2.append("span");
+    </code>
+</pre>
+
+</script></section>
+
+
+<section data-markdown ><script type="text/template">
+
+## Events
+
+We need to be aware of which elements we're talking about
+
+<pre>
+    <code>
+        d3.selectAll("input")
+          .on("change",function(data,index) {
+            // event handler
+          });
+    </code>
+</pre>
+
+Again, very similar to jQuery, `this` being DOM element.
+
+`d3.event` holds current event
+
+`this` for target DOM node
+
+</script></section>
+
+
 </div>
 </div>
 
