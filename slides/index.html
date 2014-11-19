@@ -50,11 +50,11 @@
 
 
 <section data-markdown><script type="text/template">
+## We'll be covering:
+</script></section>
 
-## We'll be covering
-
+<section data-markdown><script type="text/template">
 <div id=venn viz=presentationTopicVenn></div>
-
 </script></section>
 
 
@@ -64,10 +64,10 @@
 
 <ul id=menu>
   <li>d3: what & why</li>
-  <li>Selecting elements</li>
-  <li>Binding data</li>
-  <li>Scales</li>
-  <li>Layouts</li>
+  <li>Core API: DOM + data
+  <li>Data manipulation
+  <li>Layouts
+  <li>Full visaulisations
 </ul>
 
 <div viz=agenda></div>
@@ -976,10 +976,6 @@ function visualise(users) {
 </script></section>
 
 <section data-markdown><script type="text/template">
-## 3. You need to update it
-</script></section>
-
-<section data-markdown><script type="text/template">
 ## 1. Getting data
 - d3 has facilities to load CSV, JSON etc
 - `d3.xhr` for low-level AJAX
@@ -1120,13 +1116,12 @@ var byCohortAndCountry = d3.nest()
 </script></section>
 
 <section data-markdown><script type="text/template">
-## Only need to remember a rule of thumb
+## Rule of thumb:
 </script></section>
 
 <section data-markdown><script type="text/template">
 ## D3 has a method for that
 
-- read the docs before you write data-prep code
 </script></section>
 
 <section data-markdown><script type="text/template">
@@ -1274,25 +1269,10 @@ d3.scale.category20b()
 
 </script></section>
 
+
+
+
 <section data-markdown data-state=title><script type="text/template">
-## Thinking with data
-</script></section>
-
-<section data-markdown><script type="text/template">
-## Drive _with_ data
-</script></section>
-
-<section data-markdown><script type="text/template">
-## Your data changes first, then representation changes
-</script></section>
-
-<section data-markdown><script type="text/template">
-## e.g sorting
-</script></section>
-
-
-
-<section data-markdown><script type="text/template">
 
 ## Layouts
 
@@ -1410,6 +1390,8 @@ force.on("tick", function() {
 ## Then do it yourself...
 
 </script></section>
+
+
 
 </div>
 </div>
