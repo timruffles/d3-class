@@ -47,3 +47,7 @@
     margin: 0 0 0.5em 0; }
   #comparisons .data-framework {
     overflow: auto; }
+
+#histogram-1 path {
+  fill: rgba(0,0,0,0.5);
+}

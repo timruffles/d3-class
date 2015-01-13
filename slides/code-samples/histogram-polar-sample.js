@@ -1,65 +1,76 @@
-function drawHistogramPolar() {
+function drawSectorHistogram(el) {
     var randomData = d3.range(1000).map(d3.random.irwinHall(10));
 
     var width = 800;
     var height = 500;
     var BINS = 20;
+    var DONUT_R = 25;
 
-    var bw = 10;
+    // colours will relate to index
+      var colors = d3.scale.linear()
+      .domain([0, BINS/2, BINS - 1])
+      .range(["hsl(198, 100%, 77%)", "hsl(213, 100%, 50%)", "hsl(198, 100%, 77%)"])
+      .interpolate(d3.interpolateHsl);
 
-    var r = Math.min(width, height) / 2;
+    // we want our diagram constrained within the smallest dimension
+    // and offset to be in the center
+    var r = (Math.min(width, height) - 2 * DONUT_R) / 2;
+    var xOffset = (width - 2*r) / 2 + r;
+    var yOffset = (height - 2*r) / 2 + r;
 
-    var data = d3.layout.histogram()
-        .bins(BINS)
-        (randomData);
+    // create our histogram layout and configure
+    var histogram = d3.layout.histogram()
+        .bins(BINS);
 
-    var angle = d3.scale.linear()
-        .domain(d3.extent(data, function(d) { return d.x }))
-        .range([-Math.PI/2, Math.PI * 1.5]);
+    // apply it to our data
+    var data = histogram(randomData);
 
+    // height of bins becomes outer-radius of sector
     var y = d3.scale.linear()
         .domain(d3.extent(data, function(d) { return d.y }))
         .range([0, r]);
 
-    var svg = d3.select("#histogram-1").append("svg")
+    var svg = d3.select(el).append("svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
-        .attr("transform", "translate(" + r + "," + r + ")")
+        .attr("transform", "translate(" + xOffset + "," + yOffset + ")")
 
+    // calculate the regular arc sizes based on width of bins
+    var arcs = d3.layout.pie()
+      .value(function(d) { return d.dx })
+      (data);
 
+    // want to animate around the circle, so sort the data
+    arcs.sort(function(a,b) { return a.startAngle - b.startAngle });
 
-    var CIRCLE_DEG = 360;
-    var CIRCLE_RAD = Math.PI * 2;
+    // our arc drawing function
+    var arc = d3.svg.arc()
+      .innerRadius(DONUT_R);
 
-    function rad2deg(rad) {
-      return (rad / CIRCLE_RAD) * CIRCLE_DEG;
-    }
-
-    svg.selectAll("rect")
-        .data(data)
+    svg.selectAll("path")
+        .data(arcs)
         .enter()
-            .append("rect")
-            .style("transform", function(d) {
-              var a = angle(d.x);
-              var baseX = Math.cos(a);
-              var baseY = Math.sin(a);
-              var rotate = rad2deg(a);
-              return "translate(" + baseX + "px," + baseY + "px)  rotate(" + rotate + "deg)"; 
-            })
-            .style("transform-origin", "50% 0%")
-            .attr("width", bw)
-            .attr("height", 0)
-                    .style("opacity", 0)
-        .transition()
-        .duration(150)
-        .delay(function(d, i) {
-          return i * 150;
+        .append("path")
+        .style("fill", function(_d, i) {
+          return colors(i);
         })
-        .duration(350)
-        .style("opacity", 1)
-            .attr("height", function(d) {
-              var heightY = y(d.y);
-              return r - heightY;
-            })
+        .transition()
+        // setup a tween fn so we can animate the paths
+        .tween("d", function(d) {
+          var el = d3.select(this);
+          return function(ratioOfTransitionTime) {
+            // animate from 0 relative radius up to our full radius
+            el.attr("d", arc
+              .outerRadius(function(d) {
+                return DONUT_R + y(d.data.y) * ratioOfTransitionTime;
+              })(d));
+          }
+        })
+        // kick off the start of the arc's animations a little after one another
+        .delay(function(d, i) {
+          return i * 25;
+        })
+        // relative delays are less than duration so neighbours will animate together
+        .duration(105)
 }

@@ -1,7 +1,7 @@
 var histogram = (function() {
     return {
-        run: function() {
-            drawHistogram();
+        run: function(el) {
+            drawHistogram(el);
         },
 
         showDemoCode: function(el) {

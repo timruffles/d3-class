@@ -500,7 +500,7 @@ d3.selectAll("data-eg")
 </script></section>
 
 <section data-markdown data-state=title><script type="text/template">
-## Driving the document via data
+## Let the data drive
 </script></section>
 
 <section data-markdown><script type="text/template">
@@ -918,14 +918,6 @@ function visualise(users) {
 ```
 </script></section>
 
-<script src=visualisations/sorting.js></script>
-<style>
-.users { position: relative }
-.users li {
-  transition: all 0.25s;
-  position: absolute;
-}
-</style>
 
 <section data-markdown ><script type="text/template">
 ## With key function
@@ -1295,7 +1287,8 @@ d3.scale.category20b()
 
 ## Histogram
 
-<img src=img/histogram.png>
+<div id=histogram-1 viz=histogram></div>
+
 
 </script></section>
 
@@ -1353,6 +1346,15 @@ var drawHistogram = function(width, height) {
 
 <section data-markdown><script type="text/template">
 
+## Sector-histogram
+
+<div id=sector-histogram viz=sectorHistogram></div>
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
 ## Dynamic layouts
 
 - fire events to inform you when to re-render
@@ -1402,6 +1404,7 @@ force.on("tick", function() {
 <!-- Code samples -->
 <script src=code-samples/reflecting-change-sample.js></script>
 <script src=code-samples/histogram-sample.js></script>
+<script src=code-samples/histogram-polar-sample.js></script>
 
 <script src=slides-theme/js/little-console.js></script>
 <script src=slides-theme/js/enable-consoles.js></script>
@@ -1417,7 +1420,19 @@ force.on("tick", function() {
 <script src=visualisations/presentation-visualisations.js></script>
 <script src=visualisations/reflecting-change.js></script>
 <script src=visualisations/histogram.js></script>
+<script src=visualisations/sector-histogram.js></script>
+<script src=code-samples/histogram-polar-sample.js></script>
 <script src=visualisations/join-demo.js></script>
+
+
+<script src=visualisations/sorting.js></script>
+<style>
+.users { position: relative }
+.users li {
+  transition: all 0.25s;
+  position: absolute;
+}
+</style>
 
 <script src=visualisations/d3-contexts-explained.js></script>
 <script>explainContexts(document.querySelector(".contexts-explained"));</script>
@@ -1480,7 +1495,6 @@ force.on("tick", function() {
             revealCodeSamples();
             // TODO - is there a proper event for 'rendered'?
             setTimeout(function() {
-              setupExamples();
               revealPluginMardownCallbacks.forEach(function(fn) {
                 fn();
               });

@@ -1,11 +1,5 @@
 setupExamples()
 
-function px(fn) {
-  return function() {
-    return fn.apply(null,arguments) + "px"
-  }
-};
-
 var onPageCbs = [];
 var onPage = function (page,fn) {
   onPageCbs.push([page,fn])
@@ -66,12 +60,11 @@ function setupExamples() {
 
   cbs.push(function() {
     var vizOnPage = {}
-    Reveal.addEventListener('ready',function(event) {
-      runViz(vizOnPage,event.indexh)
-    })
+
     Reveal.addEventListener('slidechanged',function(event) {
       runViz(vizOnPage,event.indexh)
     })
+
     ;[].forEach.call(document.body.querySelectorAll("[viz]"),example.bind(null,vizOnPage))
   })
 
@@ -82,7 +75,7 @@ function runViz(pageRegistry,index) {
 }
 function example(vizRegistry,el) {
   var viz = el.getAttribute("viz")
-  var viz = window[viz]
+  viz = window[viz]
   if(!viz) throw new Error("Missing viz setup " + viz)
   var pageNum = pageNumber(el)
 
@@ -106,3 +99,10 @@ function pageNumber(el) {
     }
   }
 }
+
+function px(fn) {
+  return function() {
+    return fn.apply(null,arguments) + "px"
+  }
+};
+
