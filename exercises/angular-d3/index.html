@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html ng-app=demo>
+<head>
+<script src="lodash.js"></script>
+<script src="d3.js"></script>
+  <meta charset="utf-8">
+  <title>JS Bin</title>
+</head>
+<body ng-controller=StoryCtrl>
+  
+  
+  <form name=storyForm ng-submit=addStory()>
+    <input name=title ng-model=story.title>
+    <button>Add</button>
+  </form>
+  
+  <circles-viz id=titles 
+    options="{ columns: 3 }"
+    items="stories"
+    item-click="clicked(story)"
+    >
+    
+  </circles-viz>
+  
+  
+  
+  <script src=angular.js type="text/javascript" charset="utf-8"></script>
+  <script src=viz.js type="text/javascript" charset="utf-8">
+    
+  </script>
+</body>
+</html>

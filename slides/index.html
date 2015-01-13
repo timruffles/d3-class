@@ -48,145 +48,30 @@
 
 </script></section>
 
-
-<section data-markdown><script type="text/template">
-## We'll be covering:
-</script></section>
-
-<section data-markdown><script type="text/template">
-<div id=venn viz=presentationTopicVenn></div>
-</script></section>
-
-
 <section data-markdown><script type="text/template">
 
 ## Agenda
 
 <ul id=menu>
-  <li>d3: what & why</li>
   <li>Core API: DOM + data
   <li>Data manipulation
+  <li>Scales
   <li>Layouts
-  <li>Full visaulisations
+  <li>Full visualisations
 </ul>
 
 <div viz=agenda></div>
 
 </script></section>
 
-
 <section data-markdown><script type="text/template">
 
-## How
+## How to use d3
 
-- I'll talk
-- we'll do exercises
-- when we're happy, we move on
+1. make a selection of visual elements
+1. associate it with data
+1. style and manipulate, driven by data
 
-</script></section>
-
-
-
-<section data-markdown><script type="text/template">
-
-## What and why of d3
-
-</script></section>
-
-<section data-markdown><script type="text/template">
-
-##  What - comparison
-
-<div id=comparisons viz=comparisons></div>
-
-</script></section>
-
-
-<section data-markdown><script type="text/template">
-
-## Big ideas
-
-- Use the web platform
-- D3 is for rolling your own
-- Visualisation as theatre
-
-</script></section>
-
-<section data-markdown data-state=title><script type="text/template">
-
-## Big idea 1: web platform
-
-</script></section>
-
-<section data-markdown><script type="text/template">
-## BYO Knowledge
-</script></section>
-
-<section data-markdown><script type="text/template">
-## Built on existing APIs
-</script></section>
-
-<section data-markdown><script type="text/template">
-## Knowledge of HTML, CSS, SVG & rest of DOM
-</script></section>
-
-<section data-markdown data-state=title><script type="text/template">
-## Big idea 2: roll your own
-</script></section>
-
-<section data-markdown><script type="text/template">
-## D3 is a new way to do charts
-- power to your data
-- power to your design
-</script></section>
-
-<section data-markdown><script type="text/template">
-## Primitives for rolling your own
-</script></section>
-
-<section data-markdown><script type="text/template">
-## No pre-made visualisations
-</script></section>
-
-<section data-markdown><script type="text/template">
-## Plays well with everything
-</script></section>
-
-<section data-markdown><script type="text/template">
-## No enforced structure to your data
-</script></section>
-
-<section data-markdown><script type="text/template">
-## Freedom!
-</script></section>
-
-<section data-markdown data-state=title><script type="text/template">
-## Big idea 3: visualisation as theatre
-</script></section>
-
-
-<section data-markdown data-state=title><script type="text/template">
-## Let's play
-</script></section>
-
-<section data-markdown><script type="text/template">
-## What's the DOM?
-</script></section>
-
-<section data-markdown ><script type="text/template">
-## HTML
-</script></section>
-
-<section data-markdown ><script type="text/template">
-## CSS
-</script></section>
-
-<section data-markdown><script type="text/template">
-## D3 manipulates the DOM, driven by data
-</script></section>
-
-<section data-markdown ><script type="text/template">
-## ...manipulates the DOM...
 </script></section>
 
 <section data-markdown data-state=title><script type="text/template">
@@ -275,6 +160,30 @@
 
 </section>
 
+<section data-markdown data-state=title><script type="text/template">
+
+## Your turn!
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## What are we going to play with?
+
+- `select(css)` and `selectAll(css)`
+- `attr(Object)`
+- `style(Object)`
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Exercise
+
+- `exercises/selections`
+
+</script></section>
+
 
 <section data-markdown><script type="text/template">
 
@@ -326,21 +235,12 @@ We need to be aware of which elements we're talking about
 
 </section>
 
-
-<section data-markdown data-state=title><script type="text/template">
-
-## Your turn!
-
-</script></section>
-
 <section data-markdown><script type="text/template">
 
-## What are we going to play with?
+## Content
 
-- `select(css)` and `selectAll(css)`
-- `attr(Object)`, `style(Object)`
-- `text()`
-- `append(el)`
+- `text("say hello")`
+- `html("<p>I replace all content of the nodes</p>")`
 
 </script></section>
 
@@ -348,55 +248,80 @@ We need to be aware of which elements we're talking about
 
 ## Exercise
 
-- `exercises/selections`
+- `exercises/creating-hierarchies
 
 </script></section>
-
 
 <section data-markdown data-state=title><script type="text/template">
 ## D3 is all about data
 </script></section>
 
 <section data-markdown><script type="text/template">
+
+## How to use d3
+
+1. ~~make a selection of visual elements~~
+1. associate it with data
+1. style and manipulate, driven by data
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## `data()`
+
+```javascript
+// make a selection, then call data()
+d3.selectAll("h3")
+  .data([
+    {title: "d3"},
+    {title: "fun"}
+  ])
+  // now data can be related one-to-one with elements
+```
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+## We've got elements, and data, now what?
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## How to use d3
+
+1. ~~make a selection of visual elements~~
+1. ~~associate it with data~~
+1. style and manipulate, driven by data
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
 ## One callback API explains D3
 </script></section>
 
 <section data-markdown><script type="text/template">
-## Where jQuery is all about the DOM...
-</script></section>
-
-<section data-markdown><script type="text/template">
-## jQuery's callback
+## One callback to learn d3
 
 ```javascript
-// static value, same for all
-$(".bars")
-.css("background","red");
-```
-```javascript
-// callback to vary value for each
-$(".bars")
-.css("background",function(index,current) {
-  var el = this;
-  return $(this).data('alert') ? "red" : "green";
-});
+selectionWithData
+.style("background", 
+
+  // here it is!
+  function(data, index) {
+    return data.alert ? "red" : "green";
+  }
+
+);
 ```
 </script></section>
 
-<section data-markdown><script type="text/template">
-## D3 is all about data!
-</script></section>
 
 <section data-markdown><script type="text/template">
-## D3's callback
+## bridge between els and data
 
-```javascript
-d3.selectAll(".bars")
-.style("background",function(dataForElement,indexOfData) {
-  return dataForElement.alert ? "red" : "green";
-});
-```
 </script></section>
+
 
 <section data-markdown><script type="text/template">
 ## `(data,...) {`
@@ -417,40 +342,6 @@ d3.selectAll(".bars")
 </script></section>
 
 
-
-<section data-markdown><script type="text/template">
-## The bridge, el -> data
-```javascript
-function title(data,index) {
-  // calculate representation values from data
-  return (index + 1) + ". " + data.title;
-}
-```
-```javascript
-d3.select("#root")
-  .selectAll("h3")
-  .text(title);
-```
-</script></section>
-
-<section data-markdown data-state=title><script type="text/template">
-## ...and where does the data come from?
-</script></section>
-
-<section data-markdown><script type="text/template">
-## `data()`
-
-```javascript
-// make a selection, then call data()
-d3.selectAll("h3")
-  .data([
-    {title: "FOWA"},
-    {title: "London"}
-  ])
-  // now data can be related one-to-one with elements
-```
-</script></section>
-
 <section data-markdown><script type="text/template">
 ## Data
 
@@ -467,7 +358,7 @@ d3.selectAll("data-eg")
     { color: "green" },
     { color: "blue" },
   ])
-  .style(function(data) {
+  .style("color", function(data) {
     return data.color;
   });
 
@@ -485,7 +376,7 @@ d3.selectAll("data-eg")
   <div class=little-console></div>
 
   <script type=cheat>
-    d3.selectAll(".drive-me").data([{title:"hi"},{title:"jquery"}]).text(function(d) { return d.title })
+    d3.selectAll(".drive-me").data([{title:"hi"},{title:"d3"}]).text(function(d) { return d.title })
   </script>
 
 </section>
@@ -493,6 +384,26 @@ d3.selectAll("data-eg")
 <section data-markdown><script type="text/template">
 
 ## Your turn!
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## A little aside on `<g>`
+
+- `<g>` is how we move a group of SVG elements together, visually
+- use `transform` as a CSS property (or SVG transform attribute)
+- CSS needs CSS units, SVG needs unit-less offsets
+
+```javascript
+var transformTranslate = "translate(80px, 80px)" // 80 right, 80 down
+```
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Exercise
 
 - `exercises/my-first-data-viz`
 
@@ -573,7 +484,7 @@ d3.selectAll("data-eg")
   </script>
   <div class=little-console></div>
   <script type=cheat>
-    d3.select("#add-target").selectAll("p").data([{name:"FOWA"},{name:"London"}]).enter().append("p").text(function(x) { return x.name });
+    d3.select("#add-target").selectAll("p").data([{name:"d3"},{name:"fun"}]).enter().append("p").text(function(x) { return x.name });
   </script>
 </section>
 
@@ -598,7 +509,7 @@ d3.selectAll("data-eg")
   </script>
   <div class=little-console></div>
   <script type=cheat>
-    d3.selectAll("#update p").data([{name:"FOWA"},{name:"London"}]).text(function(x) { return x.name });
+    d3.selectAll("#update p").data([{name:"d3"},{name:"fun"}]).text(function(x) { return x.name });
   </script>
 </section>
 
@@ -1257,11 +1168,9 @@ d3.scale.category20b()
 
 ## Let's try
 
-- JSBin
+- `exercises/scales`
 
 </script></section>
-
-
 
 
 <section data-markdown data-state=title><script type="text/template">
@@ -1269,7 +1178,6 @@ d3.scale.category20b()
 ## Layouts
 
 </script></section>
-
 
 <section data-markdown><script type="text/template">
 
@@ -1393,6 +1301,14 @@ force.on("tick", function() {
 
 </script></section>
 
+<section data-markdown><script type="text/template">
+
+## Resources
+
+- [Egghead.io](https://egghead.io/series/introduction-to-d3) - mix of free and paid
+- [bost.ocks.org](http://bost.ocks.org/mike/) - tutorials from the creator
+
+</script></section>
 
 
 </div>

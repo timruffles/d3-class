@@ -1,10 +1,6 @@
-// TODO one
+// TODO select all circle elements and change their stroke style to red
+// TODO select second circle and change it's r attribute to 500
+// TODO select third circle and change its cx attribute to 650
 
 
-// TODO two
-
-
-
-// TODO three
-
-// TODO four - you should be able to achieve this with just d3's API and variable assignment
+// TODO up to you :)

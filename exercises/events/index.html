@@ -3,43 +3,27 @@
 	<head>
 		<meta charset="utf-8"><link rel=stylesheet href=../vendor/foundation/css/foundation.css>
     <style>
-      #mouse-target {
-        width: 400px;
-        height: 400px;
-        border: 2px solid red;
-        line-height: 380px;
-        text-align: center;
+      circle {
+        transition: all 0.5s;
+        fill: cadetblue;
       }
     </style>
 	</head>
 	<body>
 		
 		
-    <div class='alert-box success'>
-      <p>Render the x,y coordinates of the mouse when it moves over the red-bordered box
+    <div class='row'>
+      <h1>Events</h1>
+      <p>Via the <code>mousemove</code> and <code>mouseout</code> events, make these circles change color on hover</p>
+      <svg width=1024 height=800>
+
+        <circle r=80 cx=200 cy=150></circle>
+        <circle r=80 cx=400 cy=150></circle>
+        <circle r=80 cx=600 cy=150></circle>
+
+      </svg>
     </div>
 		
-    <div id="mouse-target">
-      <p></p>
-		</div>
-
-		<h3>Class attendees</h3>
-
-    <div class='alert-box success'>
-      <p>Hard: make this form work.
-      <p>1. Add a member to class members array on submit
-      <p>2. Remove the correct member by clicking the 'x'
-    </div>
-
-		<ul id="class-members">
-      <li>Bob <button>x</button>
-		</ul>
-
-    <form id="add-member">
-			<input type=text id="name" />
-			<button>Add member</button>
-		</form>
-
 
 	
 		<script src="d3.js"></script>

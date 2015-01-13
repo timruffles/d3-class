@@ -154,7 +154,7 @@ var presentationTopicVenn = (function() {
 
 var agenda = {
   run: function() {
-    var data = [0.1,0.2,0.2,0.2,0.3];
+    var data = [0.2,0.2,0.2,0.2,0.4];
 
     var colors = d3.scale.linear().domain([0,data.length - 1]).range(["#69C7FF","#ff0000"])
     var width  = d3.scale.linear().domain([0,0.5]).range(["0%","100%"]);

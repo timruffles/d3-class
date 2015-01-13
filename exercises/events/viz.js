@@ -1,19 +1,21 @@
 
-mouseHandler();
-classHandler();
+var data = [
+    { color: "red" },
+    { color: "green" },
+    { color: "blue" },
+  ];
 
-function mouseHandler() {
-  d3.select("#mouse-target")
-    // TODO listen for an event
-    // TODO render the x,y coordinates of the mouse into the box
+// TODO select circles, bind data
+var circle;
+  // TODO make 'onmove' handler for for `mousemove` event
+  // TODO make 'onout' handler for for `mouseout` event
+
+
+function onmove(d, i) {
+  // TODO change the fill of current element
 }
 
-function classHandler() {
-  var attendees = [];
-	
-  // TODO render attendees
-  // TODO setup the form handling
-  // TODO add attendee
-  // TODO listen for clicks on attendees
-  // TODO remove correct attendee
+function onout(d, i) {
+  // TODO reset fill to original (style null)
 }
+

@@ -2,14 +2,52 @@
 
 	<head>
 		<meta charset="utf-8"><link rel=stylesheet href=../vendor/foundation/css/foundation.css>
+    <style type="text/css" media="screen">
+      circle {
+        fill: cadetblue;
+      }
+      text {
+        text-anchor: middle;
+      }
+    </style>
 	</head>
 	<body>
 
-    <h2>1</h2>
-    <h2>2</h2>
-    <h2>3</h2>
-    <h2>4</h2>
-	
+    <div class=row>
+      <h1>Pool deaths vs Nicholas Cage films, by year</h1>
+
+      <ol>
+        <li>bind data, set each <code>&lt;text></code>'s content to <code>d.year</code>
+        <li>
+          translate the groups so 
+          <ol>
+            <li>each group's <code>x</code> is 80px to right of previous
+            <li>each group's <code>y</code> is (200 - (d.cageFilms * 20 + 20)) px
+          </ol>
+        </li>
+        <li>make each circle's radius (poolDeaths / 4) pixels
+      </ol>
+
+      <svg width=1024 height=1000>
+
+        <g class=film><circle></circle><text></text></g>
+        <g class=film><circle></circle><text></text></g>
+        <g class=film><circle></circle><text></text></g>
+        <g class=film><circle></circle><text></text></g>
+        <g class=film><circle></circle><text></text></g>
+        <g class=film><circle></circle><text></text></g>
+        <g class=film><circle></circle><text></text></g>
+        <g class=film><circle></circle><text></text></g>
+        <g class=film><circle></circle><text></text></g>
+        <g class=film><circle></circle><text></text></g>
+        <g class=film><circle></circle><text></text></g>
+
+      </svg>
+
+    </div>
+
+
+
 		<script src="d3.js"></script>
 		<script src="viz.js"></script>
 	</body>
