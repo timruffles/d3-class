@@ -1,0 +1,32 @@
+.reddit-pack circle {
+  fill: rgb(62, 119, 180);
+  fill-opacity: .25;
+  stroke: rgb(62, 119, 180);
+  stroke-width: 1px;
+  transition: fill 0.5s;
+}
+.reddit-pack .leaf circle {
+  fill: #FFB60D;
+  fill-opacity: 1;
+  stroke: #FF6C00;
+}
+
+.reddit-pack text {
+  font: 10px sans-serif;
+}
+
+.reddit-pack .detail {
+  width: 200px;
+  margin-left: 20px;
+}
+
+.reddit-pack .loading {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 45%;
+}
+
+.reddit-pack svg {
+  margin: 0 auto;
+}
