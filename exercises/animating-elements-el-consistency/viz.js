@@ -9,13 +9,42 @@ function updateUi() {
 	
 	d3.shuffle(data);
   console.log(JSON.stringify(data));
+
+
+  // el <-> d
+  // el <-> d
+  // el <-> d
+
 	
 	// TODO select fruit and bind all data
 	var update = d3.select("#fruit")
-    	.selectAll("li");
+    	.selectAll("li")
+      .data(data, function(d, i) {
+        return d.id;
+      });
 		
 	// TODO create els
-  // TODO set top based on index
+  update.enter().append("li");
+
+  var updateEnter = update
+      .text(function(d) {
+        return d.name;
+      })
+      .style("top", function(d) {
+        return d.name;
+      })
 }
 
 updateUi();
+
+
+
+
+
+
+
+
+
+
+
+

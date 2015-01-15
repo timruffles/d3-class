@@ -10,19 +10,62 @@ var data = [
   { year: 2007,  poolDeaths: 123 , cageFilms: 4 },
   { year: 2008,  poolDeaths: 94  , cageFilms: 1 },
   { year: 2009,  poolDeaths: 102 , cageFilms: 4 },
-]
+];
 
 
+var CAGE_FILMS = "cageFilms"
 
 // TODO select groups (.film), bind data
-var films;
-// TODO translate the groups so
-//  - each group's x is 80px to right of previous
-//  - each group's y is (200 - (d.cageFilms * 20 + 20)) px
+var films = d3.selectAll(".film")
+  .data(data);
+
+films.attr("transform", function(d, i) {
+  //  - each group's x is 80px to right of previous
+  var x = (80 + i * 80);
+  //  - each group's y is (200 - (d.cageFilms * 20 + 20)) px
+  var y = (200 - (d[CAGE_FILMS] * 20 + 20));
+
+  // end up with string like: translate(10px, 20px)
+  // transform: scale(0), rotate(0)
+  return "translate(" + x + ", " + y + ")";
+});
 
 // TODO make each circle's radius (poolDeaths / 4) pixels
-var circles;
+// CSS units always have a unit - visual unit, e.g em, ex, px, pt
+// SVG units in SVG attributes - unitless
+var circles = films
+  .select("circle")
+  .attr("r", function(d, i) {
+    return d.poolDeaths / 4;
+  })
 
 
 // TODO set each <text>'s content to d.year
-var text;
+var text = films.select("text")
+  .text(function(data, index) {
+    return data.year; 
+  });
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

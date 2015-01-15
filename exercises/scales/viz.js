@@ -13,16 +13,18 @@ function visualise() {
     {name: "dojo", popularity: 1e-9},
   ]
 
-  var minMax = [10, width / data.length / 2];
+  var minMax = [10, width / data.length / 4];
 
-  // TODO you're responsible for setting up the scales
+  // TODO
   var popularityToRadius = d3.scale.linear()
-  // TODO set the domain to the extent of the popularity values
-  // TODO set the range to minMax
+    .domain(d3.extent(data, function(d) { return d.popularity }))
+    .range(minMax);
 
   // TODO copy the previous scale but change its output range
   // to work on colors
-  var popularityToColor = popularityToRadius;
+  var popularityToColor = popularityToRadius
+    .copy()
+    .range(["hsl(0, 80%, 80%)","hsl(240, 80%, 80%)"]);
 
 
   // just read below this, no modifications necessary
